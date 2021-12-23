@@ -340,12 +340,30 @@ template {
   display: none;
 }
 
-:root {
+:root:root {
   /**/
   /*--color-text: #000000;*/
   --color-text: #000000;
   --color-background: #fff;
   --color-bar: #f8f8f8;
+  /*  size*/
+  --title-font: 18px;
+  --sencond-title-font: 18px;
+  /*--common-font: 12px;*/
+  --adm-color-primary: #1677ff;
+  --adm-color-success: #00b578;
+  --adm-color-warning: #ff8f1f;
+  --adm-color-danger: #ff3141;
+  --adm-color-white: #ffffff;
+  --adm-color-weak: #999999;
+  --adm-color-light: #cccccc;
+  --adm-border-color: #eeeeee;
+  --adm-font-size-main: 13px;
+  --adm-color-text: #333333;
+
+  --adm-font-family: -apple-system, blinkmacsystemfont, 'Helvetica Neue',
+  helvetica, segoe ui, arial, roboto, 'PingFang SC', 'miui',
+  'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
 }
 
 *,
@@ -357,7 +375,7 @@ template {
 }
 
 body {
-  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   user-select: none; /* 禁止用户鼠标在页面上选中文字/图片等 */
   -webkit-tap-highlight-color: transparent; /* webkit是苹果浏览器引擎，tap点击，highlight背景高亮，color颜色，颜色用数值调节 */
   background: var(--color-background);
@@ -365,8 +383,10 @@ body {
   -webkit-touch-callout: none !important;
   width: 100%;
   height: 100%;
+  font-size: var(--adm-font-size-main);
 }
-html{
+
+html {
   height: 100%;
   width: 100%;
 }
@@ -408,7 +428,9 @@ a {
 .right {
   float: right;
 }
-li{
+
+li {
   list-style: none;
 }
+
 

@@ -1,25 +1,53 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getGpa, semesterList, showScore, yearList } from '@/services/student';
+import { semesterList, yearList } from '@/services/student';
 import { InitialState } from '@@/plugin-initial-state/exports';
 import _ from 'lodash';
 import { getStuGpa, getStuScore } from '@/services/teacher';
+import { CommonString } from '@/types';
 
-export const yearApi = createAsyncThunk('yearList', async () => await yearList());
-export const yearOneApi = createAsyncThunk('yearOneApi', async () => await yearList());
-export const semesterOneApi = createAsyncThunk('semesterOneApi', async (year: API.SemesterListParam) => await semesterList(year));
-export const semesterApi = createAsyncThunk('semesterList', async (year: API.SemesterListParam) => await semesterList(year));
-export const getStuGpaApi = createAsyncThunk('getStuGpaApi', async (body?: API.GetStuGpa) => await getStuGpa(body));
-export const getStuScoreApi = createAsyncThunk('getStuScoreApi', async (body: API.GetStuScoreWithStuName) => {
-  console.log('body', body);
-  if (body.year === '全部学年') {
-    return await getStuScore(body.stu_number);
-  } else {
-    return await getStuScore(body.stu_number, body.semester === '全部学期' ? { year: body.year } : {
-      year: body.year,
-      semester: body.semester,
-    });
-  }
-});
+export const yearApi = createAsyncThunk(
+  'yearList',
+  async () => await yearList(),
+);
+export const yearOneApi = createAsyncThunk(
+  'yearOneApi',
+  async () => await yearList(),
+);
+export const semesterOneApi = createAsyncThunk(
+  'semesterOneApi',
+  async (year: API.SemesterListParam) => await semesterList(year),
+);
+export const semesterApi = createAsyncThunk(
+  'semesterList',
+  async (year: API.SemesterListParam) => await semesterList(year),
+);
+export const getStuGpaApi = createAsyncThunk(
+  'getStuGpaApi',
+  async (body?: API.GetStuGpa) => await getStuGpa(body),
+);
+export const getAllStuGpaApi = createAsyncThunk(
+  'getAllStuGpaApi',
+  async () => await getStuGpa(),
+);
+export const getStuScoreApi = createAsyncThunk(
+  'getStuScoreApi',
+  async (body: API.GetStuScoreWithStuName) => {
+    console.log('body', body);
+    if (body.year === '全部学年') {
+      return await getStuScore(body.stu_number);
+    } else {
+      return await getStuScore(
+        body.stu_number,
+        body.semester === '全部学期'
+          ? { year: body.year }
+          : {
+              year: body.year,
+              semester: body.semester,
+            },
+      );
+    }
+  },
+);
 
 export const teacherSlice = createSlice({
   name: 'detail',
@@ -63,47 +91,87 @@ export const teacherSlice = createSlice({
   extraReducers: {
     [yearApi.fulfilled.type]: (state: InitialState, action: any) => {
       if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.map((value: API.YearListResItem) => value.year_name);
+        let arr = action?.payload?.data?.item.map(
+          (value: API.YearListResItem) => value.year_name,
+        );
         state.yearList = [['全部学年', ..._.uniq(arr)]];
+      } else {
+        state.yearList = [['全部学年']];
+        state.semesterList = [[CommonString.CommonSemester]];
       }
     },
     [semesterApi.fulfilled.type]: (state: InitialState, action: any) => {
       if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.map((value: API.SemesterListResItem) => value.semester_name);
+        let arr = action?.payload?.data?.item.map(
+          (value: API.SemesterListResItem) => value.semester_name,
+        );
         state.semesterList = [['全部学期', ..._.uniq(arr)]];
+      } else {
+        state.semesterList = [[CommonString.CommonSemester]];
       }
     },
     [getStuScoreApi.fulfilled.type]: (state: InitialState, action: any) => {
       state.oneStudentScore = action?.payload?.data?.item;
-      if(!action?.payload?.data?.item){
+      if (!action?.payload?.data?.item) {
         state.oneStudentGpa = 0;
       }
     },
     [getStuGpaApi.fulfilled.type]: (state: InitialState, action: any) => {
+      state.gpa = action?.payload?.data?.item;
+    },
+    [getAllStuGpaApi.fulfilled.type]: (state: InitialState, action: any) => {
       const arr = action?.payload?.data?.item;
-      state.gpa = arr;
-      state.gradeList = [['全部年级', ..._.uniq(arr?.map((value: API.GetStuGpaResItem) => value.grade))]];
+      state.gradeList = [
+        [
+          '全部年级',
+          ..._.uniq(arr?.map((value: API.GetStuGpaResItem) => value.grade)),
+        ],
+      ];
     },
     [yearOneApi.fulfilled.type]: (state: InitialState, action: any) => {
-      console.log(action?.payload?.data?.item);
       if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.filter((value: API.YearListResItem) => value.stu_number === state.stu_num);
-        console.log('arr', arr);
-        state.yearListOne = [['全部学年', ..._.uniq(arr?.map((value: API.YearListResItem) => value.year_name))]];
-      }else {
+        let arr = action?.payload?.data?.item.filter(
+          (value: API.YearListResItem) => value.stu_number === state.stu_num,
+        );
+        state.yearListOne = [
+          [
+            '全部学年',
+            ..._.uniq(
+              arr?.map((value: API.YearListResItem) => value.year_name),
+            ),
+          ],
+        ];
+      } else {
         state.yearList = [['全部学年']];
       }
     },
     [semesterOneApi.fulfilled.type]: (state: InitialState, action: any) => {
       if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.filter((value: API.SemesterListResItem) => value.stu_number === state.stu_num);
-        state.semesterListOne = [['全部学年', ..._.uniq(arr?.map((value: API.SemesterListResItem) => value.semester_name))]];
-      }else {
+        let arr = action?.payload?.data?.item.filter(
+          (value: API.SemesterListResItem) =>
+            value.stu_number === state.stu_num,
+        );
+        state.semesterListOne = [
+          [
+            '全部学年',
+            ..._.uniq(
+              arr?.map((value: API.SemesterListResItem) => value.semester_name),
+            ),
+          ],
+        ];
+      } else {
         state.semesterList = [['全部学期']];
       }
     },
   },
 });
 
-export const { setYear, setSemester,setGrade, setStuNum, setYearOne, setSemesterOne } = teacherSlice.actions;
+export const {
+  setYear,
+  setSemester,
+  setGrade,
+  setStuNum,
+  setYearOne,
+  setSemesterOne,
+} = teacherSlice.actions;
 export default teacherSlice.reducer;
