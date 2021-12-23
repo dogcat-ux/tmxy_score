@@ -1,0 +1,64 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "umi dev",
+    "build": "umi build",
+    "postinstall": "umi generate tmp",
+    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
+    "test": "umi-test",
+    "test:coverage": "umi-test --coverage"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.6.2",
+    "antd": "4.17.2",
+    "antd-img-crop": "^4.0.2",
+    "antd-mobile": "^5.0.0-rc.4",
+    "babel-plugin-import": "^1.13.3",
+    "delay": "^5.0.0",
+    "lib-flexible": "^0.3.2",
+    "lodash": "^4.17.21",
+    "postcss-px-to-viewport": "^1.1.1",
+    "postcss-px2rem": "^0.3.0",
+    "react": "17.x",
+    "react-dev-inspector": "^1.1.1",
+    "react-dom": "17.x",
+    "react-redux": "^7.2.6",
+    "umi": "^3.5.20"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.178",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@umijs/preset-react": "1.x",
+    "@umijs/test": "^3.5.20",
+    "lint-staged": "^10.0.7",
+    "mockjs": "^1.1.0",
+    "prettier": "^2.2.0",
+    "typescript": "^4.1.2",
+    "yorkie": "^2.0.0"
+  },
+  "babel": {
+    "plugins": [
+      "transform-runtime",
+      "react-html-attrs",
+      [
+        "import",
+        {
+          "style": "css",
+          "libraryName": "antd-mobile"
+        }
+      ]
+    ]
+  }
+}
