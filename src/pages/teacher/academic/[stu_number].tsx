@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react';
-import { List, NavBar, Space } from 'antd-mobile';
-import UserHeader from '@/pages/user/components/userHeader';
-import { setYearOne, setSemesterOne, setStuNum } from '@/pages/teacher/model';
+import { Empty, List, NavBar, Space } from 'antd-mobile';
+import {
+  setYearOne,
+  setSemesterOne,
+  setStuNum,
+  setSemester,
+  setSemesterListOne,
+  getOneStuGpaApi,
+} from '@/pages/teacher/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/models';
 import { useParams } from 'umi';
@@ -12,6 +18,7 @@ import {
 } from '@/pages/teacher/model';
 import CommonHeader from '@/components/commonHeader';
 import { history } from 'umi';
+import { CommonString } from '@/types';
 
 interface ParamsType {
   stu_number: string;
@@ -21,7 +28,7 @@ const Academic: React.FC = () => {
   const dispatch = useDispatch();
   const params = useParams<ParamsType>();
   const { query = {} } = history.location;
-  const { user_name } = query;
+  const { user_name, all_gpa } = query;
   const { stu_number } = params;
   const gpa = useSelector((state: RootState) => state.teacher.oneStudentGpa);
   const score = useSelector(
@@ -36,18 +43,32 @@ const Academic: React.FC = () => {
 
   useEffect(() => {
     dispatch(setStuNum(stu_number));
+    dispatch(setSemesterOne(CommonString.CommonSemester));
+    dispatch(setYearOne(CommonString.CommonYear));
     dispatch(
       getStuScoreApi({
         stu_number: stu_number,
-        year,
-        semester,
       }),
     );
     dispatch(yearOneApi());
   }, []);
   useEffect(() => {
-    dispatch(semesterOneApi({ year }));
-  }, [year]);
+    if (year === CommonString.CommonYear) {
+      dispatch(setSemesterListOne([[CommonString.CommonSemester]]));
+      dispatch(setSemesterOne(CommonString.CommonSemester));
+      dispatch(getStuScoreApi({ stu_number }));
+      dispatch(getOneStuGpaApi({ stu_number }));
+    } else {
+      dispatch(semesterOneApi({ year }));
+      if (semester === CommonString.CommonSemester) {
+        dispatch(getStuScoreApi({ stu_number, year }));
+        dispatch(getOneStuGpaApi({ stu_number, year }));
+      } else {
+        dispatch(getStuScoreApi({ stu_number, year, semester }));
+        dispatch(getOneStuGpaApi({ stu_number, year, semester }));
+      }
+    }
+  }, [year, semester]);
   const handleYearConfirm = (v: any) => {
     dispatch(setYearOne(v[0]));
   };
@@ -64,27 +85,35 @@ const Academic: React.FC = () => {
         学生个人成绩
       </NavBar>
       <CommonHeader
-        gpaMsg={`总绩点：${gpa}`}
+        gpaMsg={`总绩点：${gpa || all_gpa}`}
         handleSemesterConfirmProp={handleSemesterConfirm}
         handleYearConfirmProp={handleYearConfirm}
         yearInfo={{ year, yearList, semesterList, semester }}
         // @ts-ignore
         userInfo={{ user_name: user_name || '', stu_number: stu_number || '' }}
       />
-      <List>
-        {score?.map((value: API.ShowScoreResItem) => {
-          return (
-            <List.Item
-              key={value?.score_id}
-              extra={value?.score}
-              description={`学分:${value?.credit} 绩点：${value?.gpa}`}
-              clickable
-            >
-              {value?.course_name}
-            </List.Item>
-          );
-        })}
-      </List>
+      {score && score.length !== 0 ? (
+        <List>
+          {score?.map((value: API.ShowScoreResItem) => {
+            return (
+              <List.Item
+                key={value?.score_id}
+                extra={value?.score}
+                description={`学分:${value?.credit} 绩点：${value?.gpa}`}
+                clickable
+              >
+                {value?.course_name}
+              </List.Item>
+            );
+          })}
+        </List>
+      ) : (
+        <Empty
+          style={{ padding: '64px 0' }}
+          imageStyle={{ width: 128 }}
+          description="暂无数据"
+        />
+      )}
     </div>
   );
 };

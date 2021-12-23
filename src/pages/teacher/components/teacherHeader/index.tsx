@@ -49,10 +49,14 @@ const TeacherHeader: React.FC<TeacherHeaderProps> = ({
   useEffect(() => {
     if (year !== CommonString.CommonYear) {
       dispatch(semesterApi({ year }));
+      dispatch(setSemester(CommonString.CommonSemester));
     } else {
       dispatch(setSemester(CommonString.CommonSemester));
     }
   }, [year]);
+  useEffect(() => {
+    dispatch(yearApi());
+  }, [grade]);
   useEffect(() => {
     if (grade === CommonString.CommonGrade) {
       if (year === CommonString.CommonYear) {

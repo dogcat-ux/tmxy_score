@@ -19,16 +19,16 @@ const Academic: React.FC = () => {
   const grade = useSelector((state: RootState) => state.teacher.grade);
   const year = useSelector((state: RootState) => state.teacher.year);
   const semester = useSelector((state: RootState) => state.teacher.semester);
-  const handleClick = (stu_number: string, user_name: string) => {
+  const handleClick = (value: API.GetStuGpaResItem) => {
     // @ts-ignore
     history.push({
-      pathname: `/teacher/academic/${stu_number}`,
-      query: { user_name },
+      pathname: `/teacher/academic/${value.stu_number}`,
+      query: { ...value },
     });
   };
   const handleSearch = (search: string) => {
     console.log('gpaData', gpaData);
-    const items = gpaData.filter(
+    const items = gpaData?.filter(
       (value) =>
         !search ||
         value?.stu_number.toLowerCase().includes(search.toLowerCase()) ||
@@ -82,7 +82,7 @@ const Academic: React.FC = () => {
               <List.Item
                 arrow={false}
                 onClick={() => {
-                  handleClick(value.stu_number, value.user_name);
+                  handleClick(value);
                 }}
                 key={value?.gpaid}
                 extra={value?.all_gpa}
