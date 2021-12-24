@@ -17,7 +17,8 @@ export const userSlice = createSlice({
   },
   reducers: {
     save: (state, action) => {
-      const { user_name, phone_number, avatar,stu_number, authority, token } = action.payload;
+      const { user_name, phone_number, avatar, stu_number, authority, token } =
+        action.payload;
       state.user_name = user_name;
       state.phone_number = phone_number;
       state.stu_number = stu_number;
@@ -29,6 +30,11 @@ export const userSlice = createSlice({
       localStorage.setItem('stu_number', stu_number);
       localStorage.setItem('authority', authority);
       localStorage.setItem('token', token);
+      localStorage.setItem('avatar', avatar);
+    },
+    updateAvatar: (state, action) => {
+      const avatar = action.payload;
+      state.avatar = avatar;
       localStorage.setItem('avatar', avatar);
     },
     logout: (state) => {
@@ -49,5 +55,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { save, logout } = userSlice.actions;
+export const { save, logout, updateAvatar } = userSlice.actions;
 export default userSlice.reducer;

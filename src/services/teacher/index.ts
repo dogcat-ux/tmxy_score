@@ -57,3 +57,42 @@ export async function getStuAllGpa(
     ...(options || {}),
   });
 }
+
+export async function teacherDetailYear(
+  body: API.teacherDetailYearParam,
+  options?: { [key: string]: any },
+) {
+  let params = new FormData();
+  _.forIn(body, function (value, key) {
+    if (value) {
+      // @ts-ignore
+      params.append(key, value);
+    }
+  });
+  return request<API.teacherDetailYearRes>(`/api/v1/teacher-detail-year`, {
+    method: 'POST',
+    data: params,
+    ...(options || {}),
+  });
+}
+
+export async function teacherDetailSemester(
+  body: API.teacherDetailSemesterParam,
+  options?: { [key: string]: any },
+) {
+  let params = new FormData();
+  _.forIn(body, function (value, key) {
+    if (value) {
+      // @ts-ignore
+      params.append(key, value);
+    }
+  });
+  return request<API.teacherDetailSemesterRes>(
+    `/api/v1/teacher-detail-semester`,
+    {
+      method: 'POST',
+      data: params,
+      ...(options || {}),
+    },
+  );
+}

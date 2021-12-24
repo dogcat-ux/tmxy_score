@@ -2,7 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { semesterList, yearList } from '@/services/student';
 import { InitialState } from '@@/plugin-initial-state/exports';
 import _ from 'lodash';
-import { getStuAllGpa, getStuGpa, getStuScore } from '@/services/teacher';
+import {
+  getStuAllGpa,
+  getStuGpa,
+  getStuScore,
+  teacherDetailSemester,
+  teacherDetailYear,
+} from '@/services/teacher';
 import { CommonString } from '@/types';
 
 export const yearApi = createAsyncThunk(
@@ -11,11 +17,12 @@ export const yearApi = createAsyncThunk(
 );
 export const yearOneApi = createAsyncThunk(
   'yearOneApi',
-  async () => await yearList(),
+  async (body: API.teacherDetailYearParam) => await teacherDetailYear(body),
 );
 export const semesterOneApi = createAsyncThunk(
   'semesterOneApi',
-  async (year: API.SemesterListParam) => await semesterList(year),
+  async (body: API.teacherDetailSemesterParam) =>
+    await teacherDetailSemester(body),
 );
 export const semesterApi = createAsyncThunk(
   'semesterList',
@@ -39,20 +46,29 @@ export const getOneStuGpaApi = createAsyncThunk(
 export const getStuScoreApi = createAsyncThunk(
   'getStuScoreApi',
   async (body: API.GetStuScoreWithStuName) => {
-    console.log('body', body);
-    if (body.year === '全部学年') {
-      return await getStuScore(body.stu_number);
+    if (body?.year && body?.semester) {
+      return await getStuScore(body?.stu_number, {
+        year: body?.year,
+        semester: body?.semester,
+      });
+    } else if (body?.year) {
+      return await getStuScore(body?.stu_number, { year: body?.year });
     } else {
-      return await getStuScore(
-        body.stu_number,
-        body.semester === '全部学期'
-          ? { year: body.year }
-          : {
-              year: body.year,
-              semester: body.semester,
-            },
-      );
+      return await getStuScore(body?.stu_number);
     }
+    // if (body.year === '全部学年') {
+    //   return await getStuScore(body.stu_number);
+    // } else {
+    //   return await getStuScore(
+    //     body.stu_number,
+    //     body.semester === '全部学期'
+    //       ? { year: body.year }
+    //       : {
+    //           year: body.year,
+    //           semester: body.semester,
+    //         },
+    //   );
+    // }
   },
 );
 
@@ -142,10 +158,12 @@ export const teacherSlice = createSlice({
       ];
     },
     [yearOneApi.fulfilled.type]: (state: InitialState, action: any) => {
+      console.log('11111111111111115456', action?.payload?.data?.item);
       if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.filter(
-          (value: API.YearListResItem) => value.stu_number === state.stu_num,
-        );
+        let arr = action?.payload?.data?.item;
+        // let arr = action?.payload?.data?.item.filter(
+        //   (value: API.YearListResItem) => value.stu_number === state.stu_num,
+        // );
         state.yearListOne = [
           [
             '全部学年',
@@ -159,11 +177,13 @@ export const teacherSlice = createSlice({
       }
     },
     [semesterOneApi.fulfilled.type]: (state: InitialState, action: any) => {
+      console.log('222222225456', action?.payload?.data?.item);
       if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.filter(
-          (value: API.SemesterListResItem) =>
-            value.stu_number === state.stu_num,
-        );
+        let arr = action?.payload?.data?.item;
+        // let arr = action?.payload?.data?.item.filter(
+        //   (value: API.SemesterListResItem) =>
+        //     value.stu_number === state.stu_num,
+        // );
         state.semesterListOne = [
           [
             CommonString.CommonSemester,

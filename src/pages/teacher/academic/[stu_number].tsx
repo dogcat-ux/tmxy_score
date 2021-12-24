@@ -42,6 +42,7 @@ const Academic: React.FC = () => {
   );
 
   useEffect(() => {
+    dispatch(yearOneApi({ stu_number }));
     dispatch(setStuNum(stu_number));
     dispatch(setSemesterOne(CommonString.CommonSemester));
     dispatch(setYearOne(CommonString.CommonYear));
@@ -50,7 +51,6 @@ const Academic: React.FC = () => {
         stu_number: stu_number,
       }),
     );
-    dispatch(yearOneApi());
   }, []);
   useEffect(() => {
     if (year === CommonString.CommonYear) {
@@ -59,7 +59,7 @@ const Academic: React.FC = () => {
       dispatch(getStuScoreApi({ stu_number }));
       dispatch(getOneStuGpaApi({ stu_number }));
     } else {
-      dispatch(semesterOneApi({ year }));
+      dispatch(semesterOneApi({ stu_number, year }));
       if (semester === CommonString.CommonSemester) {
         dispatch(getStuScoreApi({ stu_number, year }));
         dispatch(getOneStuGpaApi({ stu_number, year }));

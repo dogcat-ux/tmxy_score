@@ -54,4 +54,37 @@ declare namespace API {
     msg?: string;
     error?: string;
   };
+  type teacherDetailYearParam = {
+    stu_number: string;
+  };
+  type teacherDetailYearResItem = {
+    stu_number: string;
+    year_name: string;
+  };
+  type teacherDetailYearRes = {
+    status: number;
+    data: {
+      item: Array<teacherDetailYearResItem>;
+      total: number;
+    };
+    msg: string;
+    error: string;
+  };
+  type teacherDetailSemesterParam = {
+    stu_number: string;
+    year: string;
+  };
+  type teacherDetailSemesterResItem = {
+    stu_number: string;
+    semester_name: string;
+  };
+  type teacherDetailSemesterRes = {
+    status: number;
+    data: {
+      item: Array<teacherDetailSemesterResItem>;
+      total: number;
+    };
+    msg: string;
+    error: string;
+  };
 }

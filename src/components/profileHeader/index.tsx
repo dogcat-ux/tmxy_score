@@ -16,7 +16,7 @@ import {
   Toast,
 } from 'antd-mobile';
 import { EditSOutline, TextDeletionOutline } from 'antd-mobile-icons';
-import { logout, save } from '@/models/user';
+import { logout, save, updateAvatar } from '@/models/user';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'umi';
 import { ImageUploadItem } from 'antd-mobile/es/components/image-uploader';
@@ -110,6 +110,7 @@ const ProfileHeader: React.FC = () => {
       getBase64(file.file, (imageUrl: any) => {
         setLoading(false);
         setImageUrl(imageUrl);
+        dispatch(updateAvatar(imageUrl));
       });
     } else {
       Toast.show({
