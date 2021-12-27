@@ -21,12 +21,12 @@ declare namespace API {
   };
 
   type AmendAvatar = {
-    file: string
+    file: string;
   };
   type CommonRes = {
-    status?: number,
-    data?: string,
-    msg?: string,
-    error?: string
-  }
+    status: number;
+    data?: string;
+    msg?: string;
+    error?: string;
+  };
 }

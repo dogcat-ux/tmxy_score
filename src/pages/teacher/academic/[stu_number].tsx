@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import { Empty, List, NavBar, Space } from 'antd-mobile';
+import { Empty, List, NavBar } from 'antd-mobile';
 import {
   setYearOne,
   setSemesterOne,
   setStuNum,
-  setSemester,
   setSemesterListOne,
   getOneStuGpaApi,
 } from '@/pages/teacher/model';
@@ -18,13 +17,14 @@ import {
 } from '@/pages/teacher/model';
 import CommonHeader from '@/components/commonHeader';
 import { history } from 'umi';
-import { CommonString } from '@/types';
+import { CommonString, UserLevel } from '@/types';
+import Auth from '@/wrappers/auth';
 
 interface ParamsType {
   stu_number: string;
 }
 
-const Academic: React.FC = () => {
+const AcademicDetail: React.FC = () => {
   const dispatch = useDispatch();
   const params = useParams<ParamsType>();
   const { query = {} } = history.location;
@@ -89,7 +89,7 @@ const Academic: React.FC = () => {
         handleSemesterConfirmProp={handleSemesterConfirm}
         handleYearConfirmProp={handleYearConfirm}
         yearInfo={{ year, yearList, semesterList, semester }}
-        // @ts-ignore
+        //        @ts-ignore
         userInfo={{ user_name: user_name || '', stu_number: stu_number || '' }}
       />
       {score && score.length !== 0 ? (
@@ -97,6 +97,7 @@ const Academic: React.FC = () => {
           {score?.map((value: API.ShowScoreResItem) => {
             return (
               <List.Item
+                arrow={false}
                 key={value?.score_id}
                 extra={value?.score}
                 description={`学分:${value?.credit} 绩点：${value?.gpa}`}
@@ -118,4 +119,12 @@ const Academic: React.FC = () => {
   );
 };
 
-export default Academic;
+const AcademicDetailPage = () => {
+  return (
+    <Auth level={UserLevel.Teacher}>
+      <AcademicDetail />
+    </Auth>
+  );
+};
+
+export default AcademicDetailPage;

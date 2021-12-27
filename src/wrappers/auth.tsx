@@ -1,6 +1,5 @@
 import useUser from '@/hooks/useUser';
 import { UserLevel } from '@/types';
-import { createStore } from '@reduxjs/toolkit';
 import { Result, Button } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { Redirect, useHistory } from 'umi';
@@ -27,7 +26,7 @@ const Auth: FC<AuthProps> = ({ children, level }) => {
   }, [user]);
   return (
     <>
-      {user.authority === -1 && <Redirect to="/login"/>}
+      {user.authority === -1 && <Redirect to="/login" />}
       {isForbidden ? (
         <Result
           status="403"
@@ -42,7 +41,6 @@ const Auth: FC<AuthProps> = ({ children, level }) => {
       ) : (
         children
       )}
-
     </>
   );
 };

@@ -1,19 +1,14 @@
 import React, { useEffect } from 'react';
-import MyTabBar from '@/components/tabBar';
 import { Empty, List } from 'antd-mobile';
-import { semesterList, showScore, yearList } from '@/services/student';
 import UserHeader from '@/pages/user/components/userHeader';
-import {
-  getGpaApi,
-  setSemester,
-  showScoreApi,
-  yearApi,
-} from '@/pages/user/model';
+import { getGpaApi, showScoreApi } from '@/pages/user/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/models';
 import styles from '../../index.less';
+import Auth from '@/wrappers/auth';
+import { UserLevel } from '@/types';
 
-const Academic: React.FC = () => {
+const AcademicStudent: React.FC = () => {
   const dispatch = useDispatch();
   const gpa = useSelector((state: RootState) => state.student.gpa);
   const score = useSelector((state: RootState) => state.student.score);
@@ -48,6 +43,7 @@ const Academic: React.FC = () => {
           {score?.map((value: API.ShowScoreResItem) => {
             return (
               <List.Item
+                arrow={false}
                 key={value?.score_id}
                 extra={value?.score}
                 description={`学分:${value?.credit} 绩点：${value?.gpa}`}
@@ -68,5 +64,12 @@ const Academic: React.FC = () => {
     </div>
   );
 };
+const AcademicStudentPage = () => {
+  return (
+    <Auth level={UserLevel.Student}>
+      <AcademicStudent />
+    </Auth>
+  );
+};
 
-export default Academic;
+export default AcademicStudentPage;

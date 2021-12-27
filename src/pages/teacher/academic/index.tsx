@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import MyTabBar from '@/components/tabBar';
 import { Empty, List } from 'antd-mobile';
 import TeacherHeader from '@/pages/teacher/components/teacherHeader';
-import { showScoreApi } from '@/pages/user/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/models';
 import { getStuGpaApi } from '@/pages/teacher/model';
 import { useHistory } from 'umi';
-import { CommonString } from '@/types';
+import { CommonString, UserLevel } from '@/types';
+import Auth from '@/wrappers/auth';
 
 const Academic: React.FC = () => {
   const dispatch = useDispatch();
@@ -15,10 +14,8 @@ const Academic: React.FC = () => {
   const gpa = useSelector((state: RootState) => state.teacher.gpa);
   const [data, setData] = useState<API.GetStuGpaResItem[]>(gpa);
   const [gpaData, setGpaData] = useState<API.GetStuGpaResItem[]>(gpa);
-  const score = useSelector((state: RootState) => state.teacher.score);
   const grade = useSelector((state: RootState) => state.teacher.grade);
   const year = useSelector((state: RootState) => state.teacher.year);
-  const semester = useSelector((state: RootState) => state.teacher.semester);
   const handleClick = (value: API.GetStuGpaResItem) => {
     // @ts-ignore
     history.push({
@@ -80,7 +77,6 @@ const Academic: React.FC = () => {
           data?.map((value: API.GetStuGpaResItem) => {
             return (
               <List.Item
-                arrow={false}
                 onClick={() => {
                   handleClick(value);
                 }}
@@ -104,5 +100,12 @@ const Academic: React.FC = () => {
     </div>
   );
 };
+const AcademicPage = () => {
+  return (
+    <Auth level={UserLevel.Teacher}>
+      <Academic />
+    </Auth>
+  );
+};
 
-export default Academic;
+export default AcademicPage;

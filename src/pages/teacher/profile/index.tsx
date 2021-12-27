@@ -1,13 +1,12 @@
 import React from 'react';
-import MyTabBar from '@/components/tabBar';
-import { List } from 'antd-mobile';
-import { Image, Space } from 'antd-mobile'
 import ProfileHeader from '@/components/profileHeader';
+import Auth from '@/wrappers/auth';
+import { UserLevel } from '@/types';
 const Profile: React.FC = () => {
   return (
-    <div>
-      <ProfileHeader/>
-    </div>
+    <Auth level={UserLevel.Teacher}>
+      <ProfileHeader />
+    </Auth>
   );
 };
 

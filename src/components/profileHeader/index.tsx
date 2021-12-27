@@ -1,35 +1,15 @@
 import React, { useState } from 'react';
 import useUser from '@/hooks/useUser';
 import styles from './index.less';
-import {
-  ActionSheet,
-  Card,
-  Form,
-  Image,
-  ImageUploader,
-  Input,
-  List,
-  Modal,
-  Picker,
-  Space,
-  Tag,
-  Toast,
-} from 'antd-mobile';
+import { Form, Image, Input, List, Modal, Space, Toast } from 'antd-mobile';
 import { EditSOutline, TextDeletionOutline } from 'antd-mobile-icons';
-import { logout, save, updateAvatar } from '@/models/user';
+import { logout, updateAvatar } from '@/models/user';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'umi';
-import { ImageUploadItem } from 'antd-mobile/es/components/image-uploader';
 import { amendPassword, changeAvatar } from '@/services/user';
 import Button from 'antd-mobile/es/components/button';
-import * as LoginServices from '@/services/user';
 import { Code } from '@/types';
-import type {
-  Action,
-  ActionSheetRef,
-} from 'antd-mobile/es/components/action-sheet';
 import { Upload } from 'antd';
-import ImgCrop from 'antd-img-crop';
 
 const ProfileHeader: React.FC = () => {
   const user = useUser();
@@ -38,7 +18,6 @@ const ProfileHeader: React.FC = () => {
   const history = useHistory();
   const [imageUrl, setImageUrl] = useState<string>(avatar || '');
   const [loading, setLoading] = useState<boolean>(false);
-  const [fileList, setFileList] = useState('');
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logout());
@@ -145,7 +124,13 @@ const ProfileHeader: React.FC = () => {
           onChange={handleChange}
         >
           {imageUrl ? (
-            <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
+            <Image
+              src={imageUrl}
+              alt="avatar"
+              width={100}
+              height={100}
+              fit="cover"
+            />
           ) : (
             avatar
           )}

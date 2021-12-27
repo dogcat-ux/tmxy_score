@@ -9,6 +9,7 @@ export enum Code {
   SuccessCode = 200,
   NullCode = 10003,
   NoMatchCode = 10007,
+  TokenExpired = 30001,
 }
 export enum CommonString {
   CommonYear = '全部学年',

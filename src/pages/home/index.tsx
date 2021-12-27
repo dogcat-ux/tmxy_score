@@ -4,12 +4,14 @@ import React from 'react';
 import Login from '@/pages/login';
 
 const Home = () => {
-  // return <Auth level={UserLevel.Visitor}>
-  //   <div>23</div>
-  // </Auth>;
-  return (<div>
-    <Login/>
-  </div>)
+  return (
+    <Auth level={UserLevel.NotLogin}>
+      <Login />
+    </Auth>
+  );
+  // return (<div>
+  //   <Login/>
+  // </div>)
 };
 
 export default Home;
