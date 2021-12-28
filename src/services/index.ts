@@ -22,12 +22,19 @@ request.interceptors.response.use((res) => {
     },
   };
   if (res.status !== 200) {
-    const { msg, url } = codeMaps[res.status];
-    Toast.show({
-      icon: 'fail',
-      content: msg,
-    });
-    url && history.push('/middle');
+    try {
+      const { msg, url } = codeMaps[res.status];
+      Toast.show({
+        icon: 'fail',
+        content: msg,
+      });
+      url && history.push('/middle');
+    } catch (e) {
+      Toast.show({
+        icon: 'fail',
+        content: res.statusText,
+      });
+    }
   }
   return res;
 });
