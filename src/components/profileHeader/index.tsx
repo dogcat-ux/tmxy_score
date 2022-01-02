@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import useUser from '@/hooks/useUser';
 import styles from './index.less';
 import { Form, Image, Input, List, Modal, Space, Toast } from 'antd-mobile';
 import { EditSOutline, TextDeletionOutline } from 'antd-mobile-icons';
@@ -10,6 +9,11 @@ import { amendPassword, changeAvatar } from '@/services/user';
 import Button from 'antd-mobile/es/components/button';
 import { Code } from '@/types';
 import { Upload } from 'antd';
+import {
+  PatriarchAmendPassword,
+  PatriarchChangeAvatar,
+} from '@/services/patriarch';
+import useUser from '@/hooks/useUser';
 
 const ProfileHeader: React.FC = () => {
   const user = useUser();
@@ -24,7 +28,10 @@ const ProfileHeader: React.FC = () => {
     history.push('/home');
   };
   const handleSubmit = async (values: API.AmendPasswordParams) => {
-    const res = await amendPassword({ ...values });
+    const res =
+      user.authority === 1
+        ? await PatriarchAmendPassword({ ...values })
+        : await amendPassword({ ...values });
     if (res.status === Code.SuccessCode) {
       Toast.show({
         content: '修改密码成功！请重新登录！',
@@ -57,7 +64,6 @@ const ProfileHeader: React.FC = () => {
     reader.addEventListener('load', () => callback(reader.result));
     reader.readAsDataURL(img);
   };
-
   const beforeUpload = (file: any) => {
     //控制上传图片格式
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -79,7 +85,12 @@ const ProfileHeader: React.FC = () => {
     return isJpgOrPng && isLt2M;
   };
   const handleSubmitFile = async (file: any) => {
-    const res = await changeAvatar({ file: file.file });
+    let res;
+    if (user.authority === 1) {
+      res = await PatriarchChangeAvatar({ file: file.file });
+    } else {
+      res = await changeAvatar({ file: file.file });
+    }
     if (res.status === Code.SuccessCode) {
       setImageUrl(imageUrl);
       Toast.show({
@@ -120,6 +131,7 @@ const ProfileHeader: React.FC = () => {
           showUploadList={false}
           customRequest={handleSubmitFile}
           beforeUpload={beforeUpload}
+          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           onChange={handleChange}
         >

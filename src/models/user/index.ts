@@ -4,6 +4,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     user_name: localStorage.getItem('user_name'),
+    account: localStorage.getItem('account'),
     phone_number: localStorage.getItem('phone_number'),
     stu_number: localStorage.getItem('stu_number'),
     authority: parseInt(localStorage.getItem('authority') || '-1'),
@@ -17,16 +18,24 @@ export const userSlice = createSlice({
   },
   reducers: {
     save: (state, action) => {
-      const { user_name, phone_number, avatar, stu_number, authority, token } =
-        action.payload;
+      const {
+        account,
+        user_name,
+        phone_number,
+        avatar,
+        stu_number,
+        authority,
+        token,
+      } = action.payload;
+      state.account = account || stu_number;
       state.user_name = user_name;
       state.phone_number = phone_number;
       state.stu_number = stu_number;
       state.authority = authority;
       state.token = token;
-      state.avatar = avatar;
+      state.avatar = avatar + '?ran=' + Math.random();
       localStorage.setItem('user_name', user_name);
-      localStorage.setItem('nick_name', phone_number);
+      localStorage.setItem('account', account);
       localStorage.setItem('stu_number', stu_number);
       localStorage.setItem('authority', authority);
       localStorage.setItem('token', token);
@@ -44,7 +53,9 @@ export const userSlice = createSlice({
       state.authority = -1;
       state.token = null;
       state.avatar = null;
+      state.account = null;
 
+      localStorage.removeItem('account');
       localStorage.removeItem('user_name');
       localStorage.removeItem('phone_number');
       localStorage.removeItem('stu_number');
