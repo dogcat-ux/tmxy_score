@@ -34,9 +34,21 @@ const AcademicDetail: React.FC = () => {
   const { query = {} } = history.location;
   const { user_name, all_gpa } = query;
   const { stu_number } = params;
-  const { gpa, score, year, semester, yearList, semesterList, rank } =
-    useSelector((state: RootState) => state.teacher);
-  useEffect(() => {
+  const {
+    oneStudentGpa,
+    oneStudentScore,
+    yearOne,
+    semesterOne,
+    yearListOne,
+    semesterListOne,
+    rank,
+  } = useSelector((state: RootState) => state.teacher);
+  const year = yearOne;
+  const semester = semesterOne;
+  const yearList = yearListOne;
+  const semesterList = semesterListOne;
+  const score = oneStudentScore;
+  const getRank = () => {
     const yearTemp = year === '全部学年' ? null : year;
     const semesterTemp = semester === '全部学期' ? null : semester;
     if (yearTemp && semesterTemp) {
@@ -48,7 +60,7 @@ const AcademicDetail: React.FC = () => {
     } else {
       dispatch(getRankTeaApi({ stu_number }));
     }
-  }, []);
+  };
   useEffect(() => {
     dispatch(yearOneApi({ stu_number }));
     dispatch(setStuNum(stu_number));
@@ -60,7 +72,6 @@ const AcademicDetail: React.FC = () => {
       }),
     );
   }, []);
-  useEffect(() => {}, []);
 
   useEffect(() => {
     if (year === CommonString.CommonYear) {
@@ -78,6 +89,7 @@ const AcademicDetail: React.FC = () => {
         dispatch(getOneStuGpaApi({ stu_number, year, semester }));
       }
     }
+    getRank();
   }, [year, semester]);
   const handleYearConfirm = (v: any) => {
     dispatch(setYearOne(v[0]));
@@ -95,7 +107,7 @@ const AcademicDetail: React.FC = () => {
         学生个人成绩
       </NavBar>
       <CommonHeader
-        gpaMsg={`总绩点：${gpa || all_gpa}`}
+        gpaMsg={`总绩点：${oneStudentGpa || all_gpa}`}
         handleSemesterConfirmProp={handleSemesterConfirm}
         handleYearConfirmProp={handleYearConfirm}
         yearInfo={{ year, yearList, semesterList, semester }}

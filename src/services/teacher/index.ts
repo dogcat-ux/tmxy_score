@@ -104,7 +104,7 @@ export async function getRankTea(
   _.forIn(body, function (value, key) {
     params.append(key, value);
   });
-  return request<API.GetRankRes>('/api/v1/rank', {
+  return request<API.GetRankRes>('/api/v1/rank-student', {
     method: 'POST',
     data: params,
     ...(options || {}),
