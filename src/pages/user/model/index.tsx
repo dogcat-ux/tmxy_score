@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getGpa, semesterList, showScore, yearList } from '@/services/student';
+import {
+  getGpa,
+  getRankStu,
+  semesterList,
+  showScore,
+  yearList,
+} from '@/services/student';
 import { InitialState } from '@@/plugin-initial-state/exports';
 import _ from 'lodash';
 
@@ -19,6 +25,10 @@ export const getGpaApi = createAsyncThunk(
   'getGpaApi',
   async (body?: API.ShowScoreParam) => await getGpa(body),
 );
+export const getRankStuApi = createAsyncThunk(
+  'getRankStuApi',
+  async (body?: API.ShowScoreParam) => await getRankStu(body),
+);
 
 export const studentSlice = createSlice({
   name: 'detail',
@@ -28,6 +38,7 @@ export const studentSlice = createSlice({
     yearList: [['全部学年']],
     semesterList: [['全部学期']],
     gpa: 0,
+    rank: 0,
     score: [],
   },
   reducers: {
@@ -84,11 +95,10 @@ export const studentSlice = createSlice({
       }
     },
     [getGpaApi.fulfilled.type]: (state: InitialState, action: any) => {
-      if (action?.payload?.data?.gpa) {
-        state.gpa = action?.payload?.data?.gpa;
-      } else {
-        state.gpa = 0;
-      }
+      state.gpa = action?.payload?.data?.gpa || 0;
+    },
+    [getRankStuApi.fulfilled.type]: (state: InitialState, action: any) => {
+      state.rank = action?.payload?.data?.rank || 0;
     },
   },
 });

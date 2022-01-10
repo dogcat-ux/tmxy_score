@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { semesterList, yearList } from '@/services/student';
+import { getRankStu, semesterList, yearList } from '@/services/student';
 import { InitialState } from '@@/plugin-initial-state/exports';
 import _ from 'lodash';
 import {
+  getRankTea,
   getStuAllGpa,
   getStuGpa,
   getStuScore,
@@ -10,6 +11,7 @@ import {
   teacherDetailYear,
 } from '@/services/teacher';
 import { CommonString } from '@/types';
+import { getRankStuApi } from '@/pages/user/model';
 
 export const yearApi = createAsyncThunk(
   'yearList',
@@ -43,6 +45,7 @@ export const getOneStuGpaApi = createAsyncThunk(
   'getOneStuGpaApi',
   async (body: API.GetStuScoreWithStuName) => await getStuAllGpa(body),
 );
+
 export const getStuScoreApi = createAsyncThunk(
   'getStuScoreApi',
   async (body: API.GetStuScoreWithStuName) => {
@@ -56,20 +59,11 @@ export const getStuScoreApi = createAsyncThunk(
     } else {
       return await getStuScore(body?.stu_number);
     }
-    // if (body.year === '全部学年') {
-    //   return await getStuScore(body.stu_number);
-    // } else {
-    //   return await getStuScore(
-    //     body.stu_number,
-    //     body.semester === '全部学期'
-    //       ? { year: body.year }
-    //       : {
-    //           year: body.year,
-    //           semester: body.semester,
-    //         },
-    //   );
-    // }
   },
+);
+export const getRankTeaApi = createAsyncThunk(
+  'getRankTeaApi',
+  async (body?: API.GetStuScoreWithStuName) => await getRankTea(body),
 );
 
 export const teacherSlice = createSlice({
@@ -84,6 +78,7 @@ export const teacherSlice = createSlice({
     semesterList: [['全部学期']],
     gpa: [],
     score: [],
+    rank: 0,
     oneStudentGpa: 0,
     oneStudentScore: [],
     yearOne: '全部学年',
@@ -196,6 +191,9 @@ export const teacherSlice = createSlice({
         state.semesterListOne = [['全部学期']];
         state.semesterOne = CommonString.CommonSemester;
       }
+    },
+    [getRankTeaApi.fulfilled.type]: (state: InitialState, action: any) => {
+      state.rank = action?.payload?.data?.rank || 0;
     },
   },
 });

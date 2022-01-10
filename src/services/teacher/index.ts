@@ -96,3 +96,17 @@ export async function teacherDetailSemester(
     },
   );
 }
+export async function getRankTea(
+  body?: API.GetStuScoreWithStuName,
+  options?: { [key: string]: any },
+) {
+  let params = new FormData();
+  _.forIn(body, function (value, key) {
+    params.append(key, value);
+  });
+  return request<API.GetRankRes>('/api/v1/rank', {
+    method: 'POST',
+    data: params,
+    ...(options || {}),
+  });
+}

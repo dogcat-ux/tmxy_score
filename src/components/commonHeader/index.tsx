@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './index.less';
 import mainStyles from '@/pages/index.less';
 import { Grid, Picker, Tag } from 'antd-mobile';
 import { Space } from 'antd-mobile';
 import { DownFill } from 'antd-mobile-icons';
+import useUser from '@/hooks/useUser';
+import { UserLevel } from '@/types';
+import { getRankStu } from '@/services/student';
+import { getRankTea } from '@/services/teacher';
 
 interface HeaderProps {
   userInfo: {
@@ -11,6 +15,7 @@ interface HeaderProps {
     user_name: string;
   };
   gpaMsg: string;
+  rank: string;
   yearInfo: {
     yearList: Array<string[]>;
     semesterList: Array<string[]>;
@@ -24,6 +29,7 @@ interface HeaderProps {
 const CommonHeader: React.FC<HeaderProps> = ({
   userInfo,
   gpaMsg,
+  rank,
   yearInfo,
   handleYearConfirmProp,
   handleSemesterConfirmProp,
@@ -33,6 +39,8 @@ const CommonHeader: React.FC<HeaderProps> = ({
   const [isYearActive, setIsYearActive] = useState(false);
   const [isSemesterActive, setIsSemesterActive] = useState(false);
   const [semesterVisible, setSemesterVisible] = useState(false);
+  // const [range, setRange] = useState<number>();
+  const user = useUser();
   const handleYearDropClick = () => {
     setVisible(true);
     setIsYearActive(true);
@@ -51,6 +59,35 @@ const CommonHeader: React.FC<HeaderProps> = ({
     setIsSemesterActive(false);
     handleSemesterConfirmProp(v);
   };
+  // const getRankStudent = async () => {
+  //   let res: API.GetRankRes;
+  //   if (year && semester) {
+  //     res = await getRankStu({ year, semester });
+  //   } else if (year) {
+  //     res = await getRankStu({ year });
+  //   } else {
+  //     res = await getRankStu();
+  //   }
+  //   setRange(res?.data?.rank);
+  // };
+  // const getRankTeacher = async () => {
+  //   let res: API.GetRankRes;
+  //   if (year && semester) {
+  //     res = await getRankTea({stu_number year, semester });
+  //   } else if (year) {
+  //     res = await getRankTea({ year });
+  //   } else {
+  //     res = await getRankTea();
+  //   }
+  //   setRange(res.data?.rank);
+  // };
+  // useEffect(() => {
+  //   if (user.authority === UserLevel.Teacher) {
+  //
+  //   } else {
+  //     getRankStudent();
+  //   }
+  // }, []);
   // @ts-ignore
   return (
     <div className={styles.scoped}>
@@ -157,7 +194,10 @@ const CommonHeader: React.FC<HeaderProps> = ({
           <div></div>
         </Grid.Item>
         <Grid.Item>
-          <div className="gpa">{gpaMsg}</div>
+          <Space>
+            <div className="gpa">{gpaMsg}</div>
+            <div className="gpa">总排名：{rank}</div>
+          </Space>
         </Grid.Item>
       </Grid>
     </div>

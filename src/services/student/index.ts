@@ -13,9 +13,12 @@ import request from '..';
 //   });
 // }
 
-export async function showScore(body?: API.ShowScoreParam, options?: { [key: string]: any }) {
+export async function showScore(
+  body?: API.ShowScoreParam,
+  options?: { [key: string]: any },
+) {
   let params = new FormData();
-  _.forIn(body, function(value, key) {
+  _.forIn(body, function (value, key) {
     params.append(key, value);
   });
   return request<API.ShowScoreRes>('/api/v1/score', {
@@ -25,7 +28,10 @@ export async function showScore(body?: API.ShowScoreParam, options?: { [key: str
   });
 }
 
-export async function semesterList(body: API.SemesterListParam, options?: { [key: string]: any }) {
+export async function semesterList(
+  body: API.SemesterListParam,
+  options?: { [key: string]: any },
+) {
   return request<API.SemesterListRes>('/api/v1/semester', {
     method: 'GET',
     params: { ...body },
@@ -40,9 +46,12 @@ export async function yearList(options?: { [key: string]: any }) {
   });
 }
 
-export async function getGpa(body?: API.ShowScoreParam, options?: { [key: string]: any }) {
+export async function getGpa(
+  body?: API.ShowScoreParam,
+  options?: { [key: string]: any },
+) {
   let params = new FormData();
-  _.forIn(body, function(value, key) {
+  _.forIn(body, function (value, key) {
     params.append(key, value);
   });
   return request<API.GetGPARes>('/api/v1/gpa', {
@@ -52,4 +61,17 @@ export async function getGpa(body?: API.ShowScoreParam, options?: { [key: string
   });
 }
 
-
+export async function getRankStu(
+  body?: API.ShowScoreParam,
+  options?: { [key: string]: any },
+) {
+  let params = new FormData();
+  _.forIn(body, function (value, key) {
+    params.append(key, value);
+  });
+  return request<API.GetRankRes>('/api/v1/rank', {
+    method: 'POST',
+    data: params,
+    ...(options || {}),
+  });
+}

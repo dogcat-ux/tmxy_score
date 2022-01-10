@@ -12,6 +12,7 @@ import { DownFill } from 'antd-mobile-icons';
 import style from '../index.less';
 import { PatriarchLogin } from '@/services/patriarch';
 import { Typography } from 'antd';
+
 const { Title, Text } = Typography;
 const Entry = () => {
   const user = useUser();
@@ -45,12 +46,12 @@ const Login: React.FC = () => {
     }
     return Promise.resolve();
   };
-  const checkPassword = (_: any, value: string) => {
-    if (value.length < 5 || value.length > 16) {
-      return Promise.reject(new Error('请输入小于16位大于5位的密码'));
-    }
-    return Promise.resolve();
-  };
+  // const checkPassword = (_: any, value: string) => {
+  //   if (value.length < 5 || value.length > 16) {
+  //     return Promise.reject(new Error('请输入小于16位大于5位的密码'));
+  //   }
+  //   return Promise.resolve();
+  // };
   const handleSubmit = async (values: LoginParamsProps) => {
     let res;
     let authority = role === '家长' ? 1 : role === '学生' ? 0 : 2;
@@ -104,7 +105,6 @@ const Login: React.FC = () => {
     setIsRoleActive(false);
   };
   return (
-    // <div>
     <div className={styles.container}>
       {/*<h2>土木学院素质拓展平台</h2>*/}
       <Title level={2}>土木学院素质拓展平台</Title>
@@ -169,7 +169,11 @@ const Login: React.FC = () => {
             label="账号"
             rules={[
               { required: true, message: '账号不能为空' },
-              { validator: checkStuNum },
+              // { validator: checkStuNum },
+              {
+                pattern: /^\w{8,15}$/,
+                message: '账号在8-15位内！',
+              },
             ]}
           >
             <Input onChange={console.log} clearable placeholder="请输入账号" />
@@ -180,7 +184,11 @@ const Login: React.FC = () => {
             label="密码"
             rules={[
               { required: true, message: '密码不能为空' },
-              { validator: checkPassword },
+              // { validator: checkPassword },
+              {
+                pattern: /^\w{8,16}$/,
+                message: '密码在8-16位内！',
+              },
             ]}
           >
             <Input

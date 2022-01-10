@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Empty, List, NavBar } from 'antd-mobile';
 import {
   setYearOne,
@@ -6,6 +6,7 @@ import {
   setStuNum,
   setSemesterListOne,
   getOneStuGpaApi,
+  getRankTeaApi,
 } from '@/pages/teacher/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/models';
@@ -19,6 +20,9 @@ import CommonHeader from '@/components/commonHeader';
 import { history } from 'umi';
 import { CommonString, UserLevel } from '@/types';
 import Auth from '@/wrappers/auth';
+import { getRankStu } from '@/services/student';
+import { getRankTea } from '@/services/teacher';
+import { getRankStuApi } from '@/pages/user/model';
 
 interface ParamsType {
   stu_number: string;
@@ -30,17 +34,21 @@ const AcademicDetail: React.FC = () => {
   const { query = {} } = history.location;
   const { user_name, all_gpa } = query;
   const { stu_number } = params;
-  const gpa = useSelector((state: RootState) => state.teacher.oneStudentGpa);
-  const score = useSelector(
-    (state: RootState) => state.teacher.oneStudentScore,
-  );
-  const year = useSelector((state: RootState) => state.teacher.yearOne);
-  const semester = useSelector((state: RootState) => state.teacher.semesterOne);
-  const yearList = useSelector((state: RootState) => state.teacher.yearListOne);
-  const semesterList = useSelector(
-    (state: RootState) => state.teacher.semesterListOne,
-  );
-
+  const { gpa, score, year, semester, yearList, semesterList, rank } =
+    useSelector((state: RootState) => state.teacher);
+  useEffect(() => {
+    const yearTemp = year === '全部学年' ? null : year;
+    const semesterTemp = semester === '全部学期' ? null : semester;
+    if (yearTemp && semesterTemp) {
+      dispatch(
+        getRankTeaApi({ stu_number, year: yearTemp, semester: semesterTemp }),
+      );
+    } else if (yearTemp) {
+      dispatch(getRankTeaApi({ stu_number, year: yearTemp }));
+    } else {
+      dispatch(getRankTeaApi({ stu_number }));
+    }
+  }, []);
   useEffect(() => {
     dispatch(yearOneApi({ stu_number }));
     dispatch(setStuNum(stu_number));
@@ -52,6 +60,8 @@ const AcademicDetail: React.FC = () => {
       }),
     );
   }, []);
+  useEffect(() => {}, []);
+
   useEffect(() => {
     if (year === CommonString.CommonYear) {
       dispatch(setSemesterListOne([[CommonString.CommonSemester]]));
@@ -91,6 +101,7 @@ const AcademicDetail: React.FC = () => {
         yearInfo={{ year, yearList, semesterList, semester }}
         //        @ts-ignore
         userInfo={{ user_name: user_name || '', stu_number: stu_number || '' }}
+        rank={rank?.toString() || ''}
       />
       {score && score.length !== 0 ? (
         <List>
