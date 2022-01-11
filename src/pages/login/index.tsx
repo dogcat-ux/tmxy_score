@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styles from './index.less';
-import { Card, Toast, Form, Input, Button, Picker, Space } from 'antd-mobile';
+import { Toast, Form, Input, Button, Picker, Space } from 'antd-mobile';
 import 'antd-mobile/es/global';
 import * as LoginServices from '../../services/user';
 import { Redirect, useHistory } from 'umi';
 import { useDispatch } from 'react-redux';
 import { save } from '@/models/user';
-import { Code, UserLevel } from '@/types';
+import { Code } from '@/types';
 import useUser from '@/hooks/useUser';
 import { DownFill } from 'antd-mobile-icons';
 import style from '../index.less';
@@ -35,23 +35,10 @@ interface LoginParamsProps {
 }
 
 const Login: React.FC = () => {
-  const [loading, setLoading] = useState(false);
   const [isRoleActive, setIsRoleActive] = useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
   const [role, setRole] = useState<string>('学生');
-  const checkStuNum = (_: any, value: string) => {
-    if (value.length < 3) {
-      return Promise.reject(new Error('输入的正确的账号'));
-    }
-    return Promise.resolve();
-  };
-  // const checkPassword = (_: any, value: string) => {
-  //   if (value.length < 5 || value.length > 16) {
-  //     return Promise.reject(new Error('请输入小于16位大于5位的密码'));
-  //   }
-  //   return Promise.resolve();
-  // };
   const handleSubmit = async (values: LoginParamsProps) => {
     let res;
     let authority = role === '家长' ? 1 : role === '学生' ? 0 : 2;
@@ -70,7 +57,6 @@ const Login: React.FC = () => {
           : Toast.show({ content: `请切换至老师身份登录` });
       } else {
         dispatch(save({ ...res.data.user, token: res.data.token }));
-        setLoading(true);
         Toast.show({
           content: '登录成功',
         });
@@ -81,7 +67,6 @@ const Login: React.FC = () => {
         }
       }
     } else {
-      setLoading(false);
       Toast.show({
         content: '账号名/密码/身份错误',
       });
@@ -106,7 +91,6 @@ const Login: React.FC = () => {
   };
   return (
     <div className={styles.container}>
-      {/*<h2>土木学院素质拓展平台</h2>*/}
       <Title level={2}>土木学院素质拓展平台</Title>
       <Text type="secondary">学生账号为学号,所有账号将由学院统一分发</Text>
       <div className={styles.customBody}>
@@ -169,7 +153,6 @@ const Login: React.FC = () => {
             label="账号"
             rules={[
               { required: true, message: '账号不能为空' },
-              // { validator: checkStuNum },
               {
                 pattern: /^\w{8,15}$/,
                 message: '账号在8-15位内！',
@@ -184,10 +167,9 @@ const Login: React.FC = () => {
             label="密码"
             rules={[
               { required: true, message: '密码不能为空' },
-              // { validator: checkPassword },
               {
-                pattern: /^\w{8,16}$/,
-                message: '密码在8-16位内！',
+                pattern: /^\w{6,16}$/,
+                message: '密码在6-16位内！',
               },
             ]}
           >

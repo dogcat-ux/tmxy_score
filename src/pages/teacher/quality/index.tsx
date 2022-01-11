@@ -1,5 +1,5 @@
 import React from 'react';
-import { List } from 'antd-mobile';
+import { Empty } from 'antd-mobile';
 import TeacherHeader from '@/pages/teacher/components/teacherHeader';
 import Auth from '@/wrappers/auth';
 import { UserLevel } from '@/types';
@@ -16,11 +16,20 @@ const Quality: React.FC = () => {
         handleChange={handleChange}
         handleSearch={handleSearch}
       />
-      <List>
-        <List.Item extra="次要信息" description="这里是描述信息" clickable>
-          这里是主信息
-        </List.Item>
-      </List>
+      <div
+        style={{
+          height: '80vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <Empty
+          style={{ padding: '64px 0' }}
+          imageStyle={{ width: 128 }}
+          description="暂无数据"
+        />
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getRankStu, semesterList, yearList } from '@/services/student';
+import { semesterList, yearList } from '@/services/student';
 import { InitialState } from '@@/plugin-initial-state/exports';
 import _ from 'lodash';
 import {
@@ -10,8 +10,8 @@ import {
   teacherDetailSemester,
   teacherDetailYear,
 } from '@/services/teacher';
-import { CommonString } from '@/types';
-import { getRankStuApi } from '@/pages/user/model';
+import { Code, CommonString } from '@/types';
+import { Toast } from 'antd-mobile';
 
 export const yearApi = createAsyncThunk(
   'yearList',
@@ -111,89 +111,142 @@ export const teacherSlice = createSlice({
   },
   extraReducers: {
     [yearApi.fulfilled.type]: (state: InitialState, action: any) => {
-      if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.map(
-          (value: API.YearListResItem) => value.year_name,
-        );
-        state.yearList = [['全部学年', ..._.uniq(arr)]];
+      if (action?.payload?.status === Code.SuccessCode) {
+        if (action?.payload?.data?.item) {
+          let arr = action?.payload?.data?.item.map(
+            (value: API.YearListResItem) => value.year_name,
+          );
+          state.yearList = [['全部学年', ..._.uniq(arr)]];
+        } else {
+          state.yearList = [['全部学年']];
+          state.semesterList = [[CommonString.CommonSemester]];
+        }
       } else {
-        state.yearList = [['全部学年']];
-        state.semesterList = [[CommonString.CommonSemester]];
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
       }
     },
     [semesterApi.fulfilled.type]: (state: InitialState, action: any) => {
-      if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.map(
-          (value: API.SemesterListResItem) => value.semester_name,
-        );
-        state.semesterList = [['全部学期', ..._.uniq(arr)]];
+      if (action?.payload?.status === Code.SuccessCode) {
+        if (action?.payload?.data?.item) {
+          let arr = action?.payload?.data?.item.map(
+            (value: API.SemesterListResItem) => value.semester_name,
+          );
+          state.semesterList = [['全部学期', ..._.uniq(arr)]];
+        } else {
+          state.semesterList = [[CommonString.CommonSemester]];
+        }
       } else {
-        state.semesterList = [[CommonString.CommonSemester]];
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
       }
     },
     [getStuScoreApi.fulfilled.type]: (state: InitialState, action: any) => {
-      state.oneStudentScore = action?.payload?.data?.item;
-      // if (!action?.payload?.data?.item) {
-      //   state.oneStudentGpa = 0;
-      // }
+      if (action?.payload?.status === Code.SuccessCode) {
+        state.oneStudentScore = action?.payload?.data?.item;
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
+      }
     },
     [getOneStuGpaApi.fulfilled.type]: (state: InitialState, action: any) => {
-      state.oneStudentGpa = action?.payload?.data?.gpa || 0;
+      if (action?.payload?.status === Code.SuccessCode) {
+        state.oneStudentGpa = action?.payload?.data?.gpa || 0;
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
+      }
     },
     [getStuGpaApi.fulfilled.type]: (state: InitialState, action: any) => {
-      state.gpa = action?.payload?.data?.item;
+      if (action?.payload?.status === Code.SuccessCode) {
+        state.gpa = action?.payload?.data?.item;
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
+      }
     },
     [getAllStuGpaApi.fulfilled.type]: (state: InitialState, action: any) => {
-      const arr = action?.payload?.data?.item;
-      state.gradeList = [
-        [
-          '全部年级',
-          ..._.uniq(arr?.map((value: API.GetStuGpaResItem) => value.grade)),
-        ],
-      ];
-    },
-    [yearOneApi.fulfilled.type]: (state: InitialState, action: any) => {
-      console.log('11111111111111115456', action?.payload?.data?.item);
-      if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item;
-        // let arr = action?.payload?.data?.item.filter(
-        //   (value: API.YearListResItem) => value.stu_number === state.stu_num,
-        // );
-        state.yearListOne = [
+      if (action?.payload?.status === Code.SuccessCode) {
+        const arr = action?.payload?.data?.item;
+        state.gradeList = [
           [
-            '全部学年',
-            ..._.uniq(
-              arr?.map((value: API.YearListResItem) => value.year_name),
-            ),
+            '全部年级',
+            ..._.uniq(arr?.map((value: API.GetStuGpaResItem) => value.grade)),
           ],
         ];
       } else {
-        state.yearList = [['全部学年']];
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
+      }
+    },
+    [yearOneApi.fulfilled.type]: (state: InitialState, action: any) => {
+      if (action?.payload?.status === Code.SuccessCode) {
+        if (action?.payload?.data?.item) {
+          let arr = action?.payload?.data?.item;
+          state.yearListOne = [
+            [
+              '全部学年',
+              ..._.uniq(
+                arr?.map((value: API.YearListResItem) => value.year_name),
+              ),
+            ],
+          ];
+        } else {
+          state.yearList = [['全部学年']];
+        }
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
       }
     },
     [semesterOneApi.fulfilled.type]: (state: InitialState, action: any) => {
-      console.log('222222225456', action?.payload?.data?.item);
-      if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item;
-        // let arr = action?.payload?.data?.item.filter(
-        //   (value: API.SemesterListResItem) =>
-        //     value.stu_number === state.stu_num,
-        // );
-        state.semesterListOne = [
-          [
-            CommonString.CommonSemester,
-            ..._.uniq(
-              arr?.map((value: API.SemesterListResItem) => value.semester_name),
-            ),
-          ],
-        ];
+      if (action?.payload?.status === Code.SuccessCode) {
+        if (action?.payload?.data?.item) {
+          let arr = action?.payload?.data?.item;
+          state.semesterListOne = [
+            [
+              CommonString.CommonSemester,
+              ..._.uniq(
+                arr?.map(
+                  (value: API.SemesterListResItem) => value.semester_name,
+                ),
+              ),
+            ],
+          ];
+        } else {
+          state.semesterListOne = [['全部学期']];
+          state.semesterOne = CommonString.CommonSemester;
+        }
       } else {
-        state.semesterListOne = [['全部学期']];
-        state.semesterOne = CommonString.CommonSemester;
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
       }
     },
     [getRankTeaApi.fulfilled.type]: (state: InitialState, action: any) => {
-      state.rank = action?.payload?.data?.rank || 0;
+      if (action?.payload?.status === Code.SuccessCode) {
+        state.rank = action?.payload?.data?.rank || 0;
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
+      }
     },
   },
 });

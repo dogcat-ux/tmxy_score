@@ -21,7 +21,7 @@ const ProfileHeader: React.FC = () => {
   const avatar = localStorage.getItem('avatar');
   const history = useHistory();
   const [imageUrl, setImageUrl] = useState<string>(avatar || '');
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logout());
@@ -48,13 +48,6 @@ const ProfileHeader: React.FC = () => {
         content: '修改密码失败',
       });
     }
-  };
-  const checkPassword = (_: any, value: string) => {
-    console.log(value);
-    if (value.length < 5 || value.length > 16) {
-      return Promise.reject(new Error('密码长度应大于5小于16'));
-    }
-    return Promise.resolve();
   };
   const handleAmendPassword = async () => {
     setVisible(true);
@@ -98,7 +91,7 @@ const ProfileHeader: React.FC = () => {
         content: '更换头像成功!',
       });
       getBase64(file.file, (imageUrl: any) => {
-        setLoading(false);
+        // setLoading(false);
         setImageUrl(imageUrl);
         dispatch(updateAvatar(imageUrl));
       });
@@ -111,13 +104,13 @@ const ProfileHeader: React.FC = () => {
   };
   const handleChange = (info: any) => {
     if (info.file.status === 'uploading') {
-      setLoading(true);
+      // setLoading(true);
       return;
     }
     if (info.file.status === 'done') {
       getBase64(info.file.originFileObj, (imageUrl: any) => {
         setImageUrl(imageUrl);
-        setLoading(false);
+        // setLoading(false);
       });
     }
   };
@@ -136,13 +129,7 @@ const ProfileHeader: React.FC = () => {
           onChange={handleChange}
         >
           {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt="avatar"
-              width={100}
-              height={100}
-              fit="cover"
-            />
+            <Image src={imageUrl} alt="avatar" className="avatar" fit="cover" />
           ) : (
             avatar
           )}
@@ -185,7 +172,10 @@ const ProfileHeader: React.FC = () => {
                 label="旧密码"
                 rules={[
                   { required: true, message: '密码不能为空' },
-                  { validator: checkPassword },
+                  {
+                    pattern: /^\w{6,16}$/,
+                    message: '密码在6-16位内！',
+                  },
                 ]}
               >
                 <Input
@@ -201,7 +191,10 @@ const ProfileHeader: React.FC = () => {
                 label="新密码"
                 rules={[
                   { required: true, message: '新密码不能为空' },
-                  { validator: checkPassword },
+                  {
+                    pattern: /^\w{6,16}$/,
+                    message: '密码在6-16位内！',
+                  },
                 ]}
               >
                 <Input

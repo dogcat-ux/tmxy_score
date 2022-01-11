@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Empty, List, NavBar } from 'antd-mobile';
 import {
   setYearOne,
@@ -20,9 +20,6 @@ import CommonHeader from '@/components/commonHeader';
 import { history } from 'umi';
 import { CommonString, UserLevel } from '@/types';
 import Auth from '@/wrappers/auth';
-import { getRankStu } from '@/services/student';
-import { getRankTea } from '@/services/teacher';
-import { getRankStuApi } from '@/pages/user/model';
 
 interface ParamsType {
   stu_number: string;

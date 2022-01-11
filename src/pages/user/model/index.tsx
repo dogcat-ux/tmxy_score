@@ -8,6 +8,8 @@ import {
 } from '@/services/student';
 import { InitialState } from '@@/plugin-initial-state/exports';
 import _ from 'lodash';
+import { Code } from '@/types';
+import { Toast } from 'antd-mobile';
 
 export const yearApi = createAsyncThunk(
   'yearList',
@@ -51,54 +53,89 @@ export const studentSlice = createSlice({
   },
   extraReducers: {
     [yearApi.fulfilled.type]: (state: InitialState, action: any) => {
-      if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.filter(
-          (value: API.YearListResItem) =>
-            localStorage.getItem('stu_number') === value?.stu_number,
-        );
-        console.log('arr', arr);
-        state.yearList = [
-          [
-            '全部学年',
-            ..._.uniq(
-              arr?.map((value: API.YearListResItem) => value.year_name),
-            ),
-          ],
-        ];
+      if (action?.payload?.status === Code.SuccessCode) {
+        if (action?.payload?.data?.item) {
+          let arr = action?.payload?.data?.item.filter(
+            (value: API.YearListResItem) =>
+              localStorage.getItem('stu_number') === value?.stu_number,
+          );
+          state.yearList = [
+            [
+              '全部学年',
+              ..._.uniq(
+                arr?.map((value: API.YearListResItem) => value.year_name),
+              ),
+            ],
+          ];
+        } else {
+          state.yearList = [['全部学年']];
+        }
       } else {
-        state.yearList = [['全部学年']];
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
       }
     },
     [semesterApi.fulfilled.type]: (state: InitialState, action: any) => {
-      if (action?.payload?.data?.item) {
-        let arr = action?.payload?.data?.item.filter(
-          (value: API.SemesterListResItem) =>
-            localStorage.getItem('stu_number') === value?.stu_number,
-        );
-        console.log('arr', arr);
-        state.semesterList = [
-          [
-            '全部学期',
-            ..._.uniq(
-              arr?.map((value: API.SemesterListResItem) => value.semester_name),
-            ),
-          ],
-        ];
+      if (action?.payload?.status === Code.SuccessCode) {
+        if (action?.payload?.data?.item) {
+          let arr = action?.payload?.data?.item.filter(
+            (value: API.SemesterListResItem) =>
+              localStorage.getItem('stu_number') === value?.stu_number,
+          );
+          state.semesterList = [
+            [
+              '全部学期',
+              ..._.uniq(
+                arr?.map(
+                  (value: API.SemesterListResItem) => value.semester_name,
+                ),
+              ),
+            ],
+          ];
+        } else {
+          state.semesterList = [['全部学期']];
+        }
       } else {
-        state.semesterList = [['全部学期']];
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
       }
     },
     [showScoreApi.fulfilled.type]: (state: InitialState, action: any) => {
-      state.score = action?.payload?.data?.item;
-      if (!action?.payload?.data?.item) {
-        state.gpa = 0;
+      if (action?.payload?.status === Code.SuccessCode) {
+        state.score = action?.payload?.data?.item;
+        if (!action?.payload?.data?.item) {
+          state.gpa = 0;
+        }
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
       }
     },
     [getGpaApi.fulfilled.type]: (state: InitialState, action: any) => {
-      state.gpa = action?.payload?.data?.gpa || 0;
+      if (action?.payload?.status === Code.SuccessCode) {
+        state.gpa = action?.payload?.data?.gpa || 0;
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
+      }
     },
     [getRankStuApi.fulfilled.type]: (state: InitialState, action: any) => {
-      state.rank = action?.payload?.data?.rank || 0;
+      if (action?.payload?.status === Code.SuccessCode) {
+        state.rank = action?.payload?.data?.rank || 0;
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
+      }
     },
   },
 });

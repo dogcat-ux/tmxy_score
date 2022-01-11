@@ -24,7 +24,6 @@ const Academic: React.FC = () => {
     });
   };
   const handleSearch = (search: string) => {
-    console.log('gpaData', gpaData);
     const items = gpaData?.filter(
       (value) =>
         !search ||
@@ -56,8 +55,6 @@ const Academic: React.FC = () => {
   useEffect(() => {
     if (year !== CommonString.CommonYear) {
       handleSearch(year);
-    } else {
-      console.log(212);
     }
   }, [year]);
   useEffect(() => {

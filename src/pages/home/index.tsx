@@ -9,9 +9,6 @@ const Home = () => {
       <Login />
     </Auth>
   );
-  // return (<div>
-  //   <Login/>
-  // </div>)
 };
 
 export default Home;
