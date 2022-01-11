@@ -8,16 +8,20 @@ interface AuthProps {
   children: React.ReactNode;
   level: UserLevel;
 }
-
 const Auth: FC<AuthProps> = ({ children, level }) => {
-  const user = useUser();
   const history = useHistory();
+  const location = history.location;
+  const user = useUser();
   const [isForbidden, setIsForbidden] = useState(false);
   // const store = createStore(reducer, initialState);
   const handleClick = () => {
     history.push('/home');
   };
   useEffect(() => {
+    document.title = '土木工程学院';
+  }, []);
+  useEffect(() => {
+    console.log('location', location);
     if (user && user.authority >= level) {
       setIsForbidden(false);
     } else {
