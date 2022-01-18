@@ -104,7 +104,9 @@ const AcademicDetail: React.FC = () => {
         学生个人成绩
       </NavBar>
       <CommonHeader
-        gpaMsg={`总绩点：${oneStudentGpa || all_gpa}`}
+        gpaMsg={`总绩点：${
+          oneStudentGpa.toFixed(2) || Number(all_gpa).toFixed(2)
+        }`}
         handleSemesterConfirmProp={handleSemesterConfirm}
         handleYearConfirmProp={handleYearConfirm}
         yearInfo={{ year, yearList, semesterList, semester }}

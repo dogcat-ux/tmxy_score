@@ -78,7 +78,7 @@ const Academic: React.FC = () => {
                   handleClick(value);
                 }}
                 key={value?.gpaid}
-                extra={value?.all_gpa}
+                extra={value?.all_gpa.toFixed(2)}
                 description={`${value?.stu_number}`}
                 clickable
               >

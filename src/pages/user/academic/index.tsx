@@ -37,7 +37,7 @@ const AcademicStudent: React.FC = () => {
   }, [year, semester]);
   return (
     <div className={styles.academic}>
-      <UserHeader msg={`总绩点：${gpa}`} />
+      <UserHeader msg={`总绩点：${gpa.toFixed(2)}`} />
       {score && score.length !== 0 ? (
         <List>
           {score?.map((value: API.ShowScoreResItem) => {

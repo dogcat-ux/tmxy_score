@@ -19,12 +19,14 @@
         path: '/index.html',
         exact: true,
         name: '土木学院成绩查询',
+        redirect: '/login',
         component: '@/pages/index.tsx',
       },
       {
         path: '/',
         exact: true,
         name: '土木学院成绩查询',
+        redirect: '/login',
         component: '@/pages/index.tsx',
       },
       {

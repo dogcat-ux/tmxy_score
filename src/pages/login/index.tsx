@@ -48,7 +48,10 @@ const Login: React.FC = () => {
         password: values.password,
       });
     } else {
-      res = await LoginServices.login({ ...values });
+      res = await LoginServices.login({
+        stu_number: values.stu_number,
+        password: values.password,
+      });
     }
     if (res.status === Code.SuccessCode) {
       if (res.data.user.authority !== authority) {
@@ -154,8 +157,8 @@ const Login: React.FC = () => {
             rules={[
               { required: true, message: '账号不能为空' },
               {
-                pattern: /^\w{8,15}$/,
-                message: '账号在8-15位内！',
+                pattern: /^\w{6,15}$/,
+                message: '账号在6-15位内且不含空格！',
               },
             ]}
           >
@@ -169,7 +172,7 @@ const Login: React.FC = () => {
               { required: true, message: '密码不能为空' },
               {
                 pattern: /^\w{6,16}$/,
-                message: '密码在6-16位内！',
+                message: '密码在6-16位内且不含空格！',
               },
             ]}
           >

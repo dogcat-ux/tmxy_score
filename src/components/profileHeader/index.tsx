@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'umi';
 import { amendPassword, changeAvatar } from '@/services/user';
 import Button from 'antd-mobile/es/components/button';
-import { Code } from '@/types';
+import { Code, UserLevel } from '@/types';
 import { Upload } from 'antd';
 import {
   PatriarchAmendPassword,
@@ -135,7 +135,11 @@ const ProfileHeader: React.FC = () => {
           )}
         </Upload>
         <div>
-          <div>{user.user_name}</div>
+          {user.authority === UserLevel.Patriarch ? (
+            <div>{user.user_name}的家长</div>
+          ) : (
+            <div>{user.user_name}</div>
+          )}
           <div>{user.stu_number}</div>
         </div>
       </Space>

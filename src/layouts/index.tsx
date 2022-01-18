@@ -26,7 +26,10 @@ const MyLayout: React.FC<any> = ({ children }) => {
         children
       ) : (
         <div className={styles.layoutBox}>
-          <section>{children}</section>
+          <section>
+            {children}
+            <div className={styles.box} />
+          </section>
           <footer>
             <MyTabBar />
           </footer>

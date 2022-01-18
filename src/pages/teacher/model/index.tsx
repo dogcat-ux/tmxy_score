@@ -111,6 +111,7 @@ export const teacherSlice = createSlice({
   },
   extraReducers: {
     [yearApi.fulfilled.type]: (state: InitialState, action: any) => {
+      console.log('yearApiyearApi', action?.payload);
       if (action?.payload?.status === Code.SuccessCode) {
         if (action?.payload?.data?.item) {
           let arr = action?.payload?.data?.item.map(
@@ -146,6 +147,10 @@ export const teacherSlice = createSlice({
       }
     },
     [getStuScoreApi.fulfilled.type]: (state: InitialState, action: any) => {
+      console.log(
+        'getStuScoreApigetStuScoreApigetStuScoreApi',
+        action?.payload,
+      );
       if (action?.payload?.status === Code.SuccessCode) {
         state.oneStudentScore = action?.payload?.data?.item;
       } else {
