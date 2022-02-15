@@ -21,13 +21,6 @@ const UserHeader: React.FC<MyProps> = ({ msg }) => {
   const { yearList, semesterList, year, semester, rank } = useSelector(
     (state: RootState) => state.student,
   );
-  // const yearList = useSelector((state: RootState) => state.student.yearList);
-  // const semesterList = useSelector(
-  //   (state: RootState) => state.student.semesterList,
-  // );
-  // const year = useSelector((state: RootState) => state.student.year);
-  // const semester = useSelector((state: RootState) => state.student.semester);
-  // const [rank, setRank] = useState<number>();
   const dispatch = useDispatch();
   const user = useUser();
   const { user_name, stu_number } = user;

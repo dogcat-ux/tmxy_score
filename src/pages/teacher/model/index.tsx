@@ -7,11 +7,14 @@ import {
   getStuAllGpa,
   getStuGpa,
   getStuScore,
+  personCenter,
+  personGrade,
   teacherDetailSemester,
   teacherDetailYear,
 } from '@/services/teacher';
 import { Code, CommonString } from '@/types';
 import { Toast } from 'antd-mobile';
+import { feedBackCall } from '@/tool/feedBack';
 
 export const yearApi = createAsyncThunk(
   'yearList',
@@ -35,6 +38,10 @@ export const getStuGpaApi = createAsyncThunk(
   'getStuGpaApi',
   async (body?: API.GetStuGpa) => await getStuGpa(body),
 );
+export const personCenterApi = createAsyncThunk(
+  'personCenterApi',
+  async (body?: API.GetStuGpa) => await personCenter(body),
+);
 //获取所有不传参
 export const getAllStuGpaApi = createAsyncThunk(
   'getAllStuGpaApi',
@@ -44,6 +51,10 @@ export const getAllStuGpaApi = createAsyncThunk(
 export const getOneStuGpaApi = createAsyncThunk(
   'getOneStuGpaApi',
   async (body: API.GetStuScoreWithStuName) => await getStuAllGpa(body),
+);
+export const personGradeApi = createAsyncThunk(
+  'personGradeApi',
+  async () => await personGrade(),
 );
 
 export const getStuScoreApi = createAsyncThunk(
@@ -75,8 +86,10 @@ export const teacherSlice = createSlice({
     grade: '全部年级',
     yearList: [['全部学年']],
     gradeList: [['全部年级']],
+    gradeListQuality: [['全部年级']],
     semesterList: [['全部学期']],
     gpa: [],
+    personCenter: [],
     score: [],
     rank: 0,
     oneStudentGpa: 0,
@@ -180,6 +193,17 @@ export const teacherSlice = createSlice({
         });
       }
     },
+
+    [personCenterApi.fulfilled.type]: (state: InitialState, action: any) => {
+      if (action?.payload?.status === Code.SuccessCode) {
+        state.personCenter = action?.payload?.data?.item;
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: action?.payload?.msg || '出了点小问题',
+        });
+      }
+    },
     [getAllStuGpaApi.fulfilled.type]: (state: InitialState, action: any) => {
       if (action?.payload?.status === Code.SuccessCode) {
         const arr = action?.payload?.data?.item;
@@ -195,6 +219,12 @@ export const teacherSlice = createSlice({
           content: action?.payload?.msg || '出了点小问题',
         });
       }
+    },
+    [personGradeApi.fulfilled.type]: (state: InitialState, action: any) => {
+      feedBackCall(action?.payload, '获取年级失败', () => {
+        const arr = action?.payload?.data?.item;
+        state.gradeListQuality = [['全部年级', ...arr]];
+      });
     },
     [yearOneApi.fulfilled.type]: (state: InitialState, action: any) => {
       if (action?.payload?.status === Code.SuccessCode) {

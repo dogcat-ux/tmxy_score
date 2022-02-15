@@ -1,17 +1,21 @@
 import request from '..';
 import _ from 'lodash';
 
-// export async function scoreUpload(body: API.ScoreUpload, options?: { [key: string]: any }) {
-//   let params = new FormData();
-//   params.append('file', body.file);
-//   params.append('year', body.year.toString());
-//   params.append('semester', body.semester.toString());
-//   return request('/api/v1/score-upload', {
-//     method: 'POST',
-//     data: params,
-//     ...(options || {}),
-//   });
-// }
+export async function personCenter(
+  body?: API.personCenterParam,
+  options?: { [key: string]: any },
+) {
+  let params = new FormData();
+  _.forIn(body, function (value, key) {
+    params.append(key, value);
+  });
+  return request<API.personCenterRes>('/api/v1/person-center', {
+    method: 'POST',
+    data: params,
+    ...(options || {}),
+  });
+}
+
 export async function getStuGpa(
   body?: API.GetStuGpa,
   options?: { [key: string]: any },
@@ -107,6 +111,13 @@ export async function getRankTea(
   return request<API.GetRankRes>('/api/v1/rank-student', {
     method: 'POST',
     data: params,
+    ...(options || {}),
+  });
+}
+
+export async function personGrade(options?: { [key: string]: any }) {
+  return request<API.PersonGrade>('/api/v1/grade', {
+    method: 'GET',
     ...(options || {}),
   });
 }

@@ -58,6 +58,12 @@
         component: '@/pages/teacher/academic/[stu_number].tsx',
       },
       {
+        path: '/teacher/quality/:stu_number',
+        exact: true,
+        name: '素拓成绩',
+        component: '@/pages/teacher/quality/[stu_number].tsx',
+      },
+      {
         path: '/teacher/profile',
         exact: true,
         name: '个人中心',

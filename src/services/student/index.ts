@@ -38,9 +38,26 @@ export async function semesterList(
     ...(options || {}),
   });
 }
+export async function semesterListQuality(
+  body: API.SemesterListParam,
+  options?: { [key: string]: any },
+) {
+  return request<API.SemesterListResQuality>('/api/v1/activity-semester', {
+    method: 'GET',
+    params: { ...body },
+    ...(options || {}),
+  });
+}
 
 export async function yearList(options?: { [key: string]: any }) {
   return request<API.YearListRes>('/api/v1/year', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+export async function yearListQuilty(options?: { [key: string]: any }) {
+  return request<API.YearListResQulity>('/api/v1/activity-year', {
     method: 'GET',
     ...(options || {}),
   });
@@ -74,4 +91,58 @@ export async function getRankStu(
     data: params,
     ...(options || {}),
   });
+}
+
+export async function allScore(options?: { [key: string]: any }) {
+  // @ts-ignore
+  return request<API.allScoreResGet>(`/api/v1/all-score`, {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+export async function rank(options?: { [key: string]: any }) {
+  // @ts-ignore
+  return request<API.rankRes>(`api/v1/rank`, {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+export async function allScorePost(
+  body?: API.allScoreResPostParam,
+  options?: { [key: string]: any },
+) {
+  let params = new FormData();
+  _.forIn(body, function (value, key) {
+    // @ts-ignore
+    return params.append(key, value);
+  });
+  // @ts-ignore
+  return request<API.allScoreResPost>(`/api/v1/all-score`, {
+    method: 'POST',
+    data: params,
+    ...(options || {}),
+  });
+}
+
+export async function allScoreTeacher(
+  stu_number?: string,
+  body?: API.allScoreResPostParam,
+  options?: { [key: string]: any },
+) {
+  let params = new FormData();
+  _.forIn(body, function (value, key) {
+    // @ts-ignore
+    return params.append(key, value);
+  });
+  // @ts-ignore
+  return request<API.allScoreResPost>(
+    `/api/v1/all-score-teacher/${stu_number}`,
+    {
+      method: 'POST',
+      data: params,
+      ...(options || {}),
+    },
+  );
 }

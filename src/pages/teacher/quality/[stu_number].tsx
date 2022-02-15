@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Empty, Image, List, Space } from 'antd-mobile';
-import { AddCircleOutline } from 'antd-mobile-icons';
-import UserHeader from '@/pages/user/components/userHeader';
-import Auth from '@/wrappers/auth';
-import { UserLevel } from '@/types';
-import { Table } from 'antd';
+import useUser from '@/hooks/useUser';
 import {
   allScore,
-  allScorePost,
-  semesterList,
+  allScoreTeacher,
   semesterListQuality,
-  yearList,
   yearListQuilty,
 } from '@/services/student';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/models';
-import { getGpaApi, showScoreApi } from '@/pages/user/model';
 import CommonHeader from '@/components/commonHeader';
-import useUser from '@/hooks/useUser';
+import { Card, NavBar } from 'antd-mobile';
+import { AddCircleOutline } from 'antd-mobile-icons';
+import { Table } from 'antd';
+import Auth from '@/wrappers/auth';
+import { UserLevel } from '@/types';
+import { history } from '@@/core/history';
+import { useParams } from 'umi';
+
 const columns: Array<{ title: string; dataIndex: string; key: string }> = [
   {
     title: '活动名称',
@@ -60,33 +57,32 @@ const columns3: Array<{ title: string; dataIndex: string; key: string }> = [
   },
 ];
 const CumulativeScore: React.FC = () => {
-  const map = new Map();
   const [items, setItems] = useState<API.allScoreResPostItem[]>([]);
   const [items1, setItems1] = useState<API.allScoreResPostItem[]>([]);
   const [items2, setItems2] = useState<API.allScoreResPostItem[]>([]);
-  const [score, setScore] = useState<number>();
+  const [score, setScore] = useState<string>('');
   const [years, setYears] = useState<string[]>();
+  const map = new Map();
   const [yearsMap, setYearsMap] = useState<any>(map);
   const [semestersMap, setSemestersMap] = useState<any>(map);
   const [semesters, setSemesters] = useState<string[]>();
   const [year, setYear] = useState<string>();
   const [semester, setSemester] = useState<string>();
-  const user = useUser();
-  const { user_name, stu_number } = user;
+  const params = useParams<{ stu_number: string }>();
+  const { stu_number } = params;
+  const { query = {} } = history.location;
+  const { user_name, all_score } = query;
   const sendApi = async (key?: number) => {
-    let [allScoreRes, years] = await Promise.all([
-      allScore(),
-      yearListQuilty(),
-    ]);
+    let years = await yearListQuilty();
     const map = new Map();
     let res = null;
     if (yearsMap.has(year) && !semestersMap.has(semester)) {
-      res = await allScorePost({
+      res = await allScoreTeacher(stu_number, {
         year_start_time_stamp: yearsMap.get(year)?.year_start_time,
         year_end_time_stamp: yearsMap.get(year)?.year_end_time,
       });
     } else if (yearsMap.has(year) && semestersMap.has(semester)) {
-      res = await allScorePost({
+      res = await allScoreTeacher(stu_number, {
         year_start_time_stamp: yearsMap?.get(year)?.year_start_time,
         year_end_time_stamp: yearsMap?.get(year)?.year_end_time,
         semester_start_time_stamp:
@@ -94,15 +90,16 @@ const CumulativeScore: React.FC = () => {
         semester_end_time_stamp: semestersMap?.get(semester)?.semester_end_time,
       });
     } else if (!yearsMap.has(year) && semestersMap.has(semester)) {
-      res = await allScorePost({
+      res = await allScoreTeacher(stu_number, {
         semester_start_time_stamp:
           semestersMap?.get(semester)?.semester_start_time,
         semester_end_time_stamp: semestersMap?.get(semester)?.semester_end_time,
       });
     } else {
-      res = await allScorePost();
+      res = await allScoreTeacher(stu_number);
     }
-    allScoreRes?.data && setScore(allScoreRes?.data);
+    // @ts-ignore
+    all_score && setScore(parseFloat(all_score).toFixed(2) || '暂无');
     res?.data?.activity && setItems(res?.data?.activity);
     res?.data?.extra_add && setItems1(res?.data?.extra_add);
     res?.data?.extra_deduction && setItems2(res?.data?.extra_deduction);
@@ -125,12 +122,7 @@ const CumulativeScore: React.FC = () => {
     });
     setYearsMap(map);
   };
-  useEffect(() => {
-    sendApi();
-  }, []);
-  useEffect(() => {
-    sendApi();
-  }, [semester]);
+
   useEffect(() => {
     if (year !== '全部学年') {
       year &&
@@ -157,9 +149,16 @@ const CumulativeScore: React.FC = () => {
       setSemesters(['全部学期']);
     }
     sendApi();
-  }, [year]);
+  }, [year, semester]);
+  const back = () => {
+    history.push('/teacher/quality');
+  };
+  // @ts-ignore
   return (
     <>
+      <NavBar onBack={back} style={{ fontSize: 12 }}>
+        学生素质拓展成绩
+      </NavBar>
       <CommonHeader
         handleSemesterConfirmProp={(data) => {
           setSemester(data[0]);
@@ -174,7 +173,8 @@ const CumulativeScore: React.FC = () => {
           year: year || '全部学年',
           semester: semester || '全部学期',
         }}
-        userInfo={{ stu_number, user_name }}
+        //        @ts-ignore
+        userInfo={{ user_name: user_name || '', stu_number: stu_number || '' }}
       ></CommonHeader>
 
       <div>
@@ -227,13 +227,12 @@ const CumulativeScore: React.FC = () => {
     </>
   );
 };
-
-const QualityPage = () => {
+const QualityDetailPage = () => {
   return (
-    <Auth level={UserLevel.Student}>
+    <Auth level={UserLevel.Teacher}>
       <CumulativeScore />
     </Auth>
   );
 };
 
-export default QualityPage;
+export default QualityDetailPage;

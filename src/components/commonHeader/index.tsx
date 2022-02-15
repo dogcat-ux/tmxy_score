@@ -10,12 +10,13 @@ import { getRankStu } from '@/services/student';
 import { getRankTea } from '@/services/teacher';
 
 interface HeaderProps {
-  userInfo: {
-    stu_number: string;
-    user_name: string;
+  userInfo?: {
+    stu_number?: string | null;
+    user_name?: string | null;
   };
-  gpaMsg: string;
-  rank: string;
+  gpaMsg?: string;
+  rank?: string;
+  score?: string;
   yearInfo: {
     yearList: Array<string[]>;
     semesterList: Array<string[]>;
@@ -31,6 +32,7 @@ const CommonHeader: React.FC<HeaderProps> = ({
   gpaMsg,
   rank,
   yearInfo,
+  score,
   handleYearConfirmProp,
   handleSemesterConfirmProp,
 }) => {
@@ -39,8 +41,6 @@ const CommonHeader: React.FC<HeaderProps> = ({
   const [isYearActive, setIsYearActive] = useState(false);
   const [isSemesterActive, setIsSemesterActive] = useState(false);
   const [semesterVisible, setSemesterVisible] = useState(false);
-  // const [range, setRange] = useState<number>();
-  const user = useUser();
   const handleYearDropClick = () => {
     setVisible(true);
     setIsYearActive(true);
@@ -59,47 +59,17 @@ const CommonHeader: React.FC<HeaderProps> = ({
     setIsSemesterActive(false);
     handleSemesterConfirmProp(v);
   };
-  // const getRankStudent = async () => {
-  //   let res: API.GetRankRes;
-  //   if (year && semester) {
-  //     res = await getRankStu({ year, semester });
-  //   } else if (year) {
-  //     res = await getRankStu({ year });
-  //   } else {
-  //     res = await getRankStu();
-  //   }
-  //   setRange(res?.data?.rank);
-  // };
-  // const getRankTeacher = async () => {
-  //   let res: API.GetRankRes;
-  //   if (year && semester) {
-  //     res = await getRankTea({stu_number year, semester });
-  //   } else if (year) {
-  //     res = await getRankTea({ year });
-  //   } else {
-  //     res = await getRankTea();
-  //   }
-  //   setRange(res.data?.rank);
-  // };
-  // useEffect(() => {
-  //   if (user.authority === UserLevel.Teacher) {
-  //
-  //   } else {
-  //     getRankStudent();
-  //   }
-  // }, []);
-  // @ts-ignore
   return (
     <div className={styles.scoped}>
       <Grid columns={1} gap={8}>
         <Grid.Item>
           <div className="user_header">
             <div className="stu_num">
-              <span className="username">{userInfo.user_name}</span>
+              <span className="username">{userInfo && userInfo.user_name}</span>
             </div>
             <div className="stu_num">
               <Tag color="primary" fill="outline">
-                {userInfo.stu_number}
+                {userInfo && userInfo.stu_number}
               </Tag>
             </div>
           </div>
@@ -195,8 +165,9 @@ const CommonHeader: React.FC<HeaderProps> = ({
         </Grid.Item>
         <Grid.Item>
           <Space>
-            <div className="gpa">{gpaMsg}</div>
-            <div className="gpa">总排名：{rank}</div>
+            {gpaMsg && <div className="gpa">{gpaMsg}</div>}
+            {rank && <div className="gpa">总排名：{rank}</div>}
+            {score && <div className="gpa">累计分数：{score}</div>}
           </Space>
         </Grid.Item>
       </Grid>

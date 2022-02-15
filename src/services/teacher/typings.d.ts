@@ -8,6 +8,16 @@ declare namespace API {
     semester?: string; //学期
     info?: string; //学期
   };
+  type personCenterParam = {
+    grade?: string;
+    year_start_time_stamp?: number;
+    year_end_time_stamp?: number;
+    semester_start_time_stamp?: number;
+    semester_end_time_stamp?: number;
+    //info?:031904102
+    page_size?: number;
+    page_num?: number;
+  };
   type GetStuScore = {
     year?: string; //学年
     semester?: string; //学期
@@ -26,6 +36,16 @@ declare namespace API {
     score?: number;
     gpa?: number;
     grade?: string;
+  };
+  type personCenterResItem = {
+    stu_number: string;
+    user_name: string;
+    phone_number: number;
+    all_score: number;
+    activity_score: number;
+    extra_add_score: number;
+    extra_deduction_score: number;
+    created_at: number;
   };
   type GetStuGpaResItem = {
     gpaid?: number;
@@ -54,6 +74,16 @@ declare namespace API {
     msg?: string;
     error?: string;
   };
+  type personCenterRes = {
+    status?: number;
+    data?: {
+      item?: Array<personCenterResItem>;
+      total?: number;
+    };
+    msg?: string;
+    error?: string;
+  };
+
   type teacherDetailYearParam = {
     stu_number: string;
   };

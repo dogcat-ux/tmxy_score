@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Dropdown, Grid, Picker, Radio, SearchBar, Space } from 'antd-mobile';
+import { Picker, SearchBar, Space } from 'antd-mobile';
 import { DownFill } from 'antd-mobile-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/models';
 import styles from '../../index.less';
-import {
-  getAllStuGpaApi,
-  getStuGpaApi,
-  personCenterApi,
-  semesterApi,
-  setGrade,
-  setSemester,
-  setYear,
-  yearApi,
-} from '@/pages/teacher/model';
 import mainStyles from '@/pages/index.less';
-import { CommonString } from '@/types';
+import { semesterListQuality, yearListQuilty } from '@/services/student';
+import { personCenterApi, personGradeApi } from '../../model';
 
 interface TeacherHeaderProps {
   handleSearch: (search: string) => void;
@@ -24,20 +15,14 @@ interface TeacherHeaderProps {
   isQuality?: boolean;
 }
 
-const TeacherHeader: React.FC<TeacherHeaderProps> = ({
+const TeacherQualityHeader: React.FC<TeacherHeaderProps> = ({
   handleSearch,
   handleChange,
   handleCancel,
-  isQuality = false,
 }) => {
-  const yearList = useSelector((state: RootState) => state.teacher.yearList);
-  const semesterList = useSelector(
-    (state: RootState) => state.teacher.semesterList,
+  const gradeList = useSelector(
+    (state: RootState) => state.teacher.gradeListQuality,
   );
-  const year = useSelector((state: RootState) => state.teacher.year);
-  const grade = useSelector((state: RootState) => state.teacher.grade);
-  const gradeList = useSelector((state: RootState) => state.teacher.gradeList);
-  const semester = useSelector((state: RootState) => state.teacher.semester);
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [gradeVisible, setGradeVisible] = useState(false);
@@ -45,71 +30,88 @@ const TeacherHeader: React.FC<TeacherHeaderProps> = ({
   const [isYearActive, setIsYearActive] = useState(false);
   const [isSemesterActive, setIsSemesterActive] = useState(false);
   const [isGradeActive, setIsGradeActive] = useState(false);
+  const [years, setYears] = useState<string[]>();
+  const [grade, setGrade] = useState<string>('全部年级');
+  const map = new Map();
+  const [yearsMap, setYearsMap] = useState<any>(map);
+  const [semestersMap, setSemestersMap] = useState<any>(map);
+  const [semesters, setSemesters] = useState<string[]>();
+  const [year, setYear] = useState<string>('全部学年');
+  const [semester, setSemester] = useState<string>('全部学期');
+  const sendApi = async (gradeTemp?: string) => {
+    let years = await yearListQuilty();
+    const map = new Map();
+    let res = null;
+    let res1 = null;
+    let res2 = null;
+    if (yearsMap.has(year)) {
+      res = {
+        year_start_time_stamp: yearsMap.get(year)?.year_start_time,
+        year_end_time_stamp: yearsMap.get(year)?.year_end_time,
+      };
+    }
+    if (semestersMap.has(semester)) {
+      res1 = {
+        semester_start_time_stamp:
+          semestersMap?.get(semester)?.semester_start_time,
+        semester_end_time_stamp: semestersMap?.get(semester)?.semester_end_time,
+      };
+    }
+    if (grade !== '全部年级') {
+      res2 = { grade };
+    }
+    dispatch(personCenterApi({ ...res, ...res1, ...res2 }));
+    if (years?.data?.item && years?.data?.item?.length > 0) {
+      // @ts-ignore
+      setYears([
+        '全部学年',
+        ...years.data.item.map((value: API.YearListResItemQulity) =>
+          value?.year?.toString(),
+        ),
+      ]);
+    }
+    // @ts-ignore
+    years?.data?.item?.map((value: API.YearListResItemQulity) => {
+      map.set(value?.year?.toString(), {
+        year_start_time: value?.year_start_time,
+        year_end_time: value?.year_end_time,
+      });
+      return map;
+    });
+    setYearsMap(map);
+  };
+
   useEffect(() => {
-    dispatch(yearApi());
-    dispatch(getAllStuGpaApi());
+    dispatch(personGradeApi());
   }, []);
   useEffect(() => {
-    if (year !== CommonString.CommonYear) {
-      dispatch(semesterApi({ year }));
-      dispatch(setSemester(CommonString.CommonSemester));
+    if (year !== '全部学年') {
+      year &&
+        semesterListQuality({ year }).then((res) => {
+          // @ts-ignore
+          setSemesters(
+            ['全部学期'].concat(
+              res?.data?.item?.map((value: API.SemesterListResItemQulity) =>
+                value?.semester?.toString(),
+              ),
+            ),
+          );
+          const map = new Map();
+          res?.data?.item?.map((value: API.SemesterListResItemQulity) => {
+            map.set(value?.semester?.toString(), {
+              semester_start_time: value?.semester_start_time,
+              semester_end_time: value?.semester_end_time,
+            });
+            return map;
+          });
+          setSemestersMap(map);
+        });
     } else {
-      dispatch(setSemester(CommonString.CommonSemester));
+      setSemesters(['全部学期']);
     }
-  }, [year]);
-  useEffect(() => {
-    dispatch(yearApi());
-  }, [grade]);
-  useEffect(() => {
-    if (grade === CommonString.CommonGrade) {
-      if (year === CommonString.CommonYear) {
-        dispatch(getStuGpaApi());
-      } else {
-        if (semester === CommonString.CommonSemester) {
-          dispatch(getStuGpaApi({ year }));
-        } else {
-          dispatch(getStuGpaApi({ year, semester }));
-        }
-      }
-    } else {
-      if (year === CommonString.CommonYear) {
-        dispatch(getStuGpaApi({ grade }));
-      } else {
-        if (semester === CommonString.CommonSemester) {
-          dispatch(getStuGpaApi({ grade, year }));
-        } else {
-          dispatch(getStuGpaApi({ grade, year, semester }));
-        }
-      }
-    }
-  }, [grade, year, semester]);
-  const handleYearDropClick = () => {
-    setVisible(true);
-    setIsYearActive(true);
-  };
-  const handleGradeDropClick = () => {
-    setGradeVisible(true);
-    setIsGradeActive(true);
-  };
-  const handleSemesterDropClick = () => {
-    setSemesterVisible(true);
-    setIsSemesterActive(true);
-  };
-  const handleYearConfirm = (v: any) => {
-    setIsYearActive(false);
-    setVisible(false);
-    dispatch(setYear(v[0]));
-  };
-  const handleGradeConfirm = (v: any) => {
-    setGradeVisible(false);
-    setIsGradeActive(false);
-    dispatch(setGrade(v[0]));
-  };
-  const handleSemesterConfirm = (v: any) => {
-    setSemesterVisible(false);
-    setIsSemesterActive(false);
-    dispatch(setSemester(v[0]));
-  };
+    sendApi();
+  }, [year, grade, semester]);
+
   const onSearch = (search: string) => {
     handleSearch(search);
   };
@@ -119,7 +121,35 @@ const TeacherHeader: React.FC<TeacherHeaderProps> = ({
   const onCancel = () => {
     handleCancel();
   };
+  const handleYearDropClick = () => {
+    setVisible(true);
+    setIsYearActive(true);
+  };
+  const handleSemesterDropClick = () => {
+    setSemesterVisible(true);
+    setIsSemesterActive(true);
+  };
+  const handleYearConfirm = (v: any) => {
+    setVisible(false);
+    setIsYearActive(false);
+    setYear(v[0]);
+  };
+  const handleGradeDropClick = () => {
+    setGradeVisible(true);
+    setIsGradeActive(true);
+  };
+  const handleSemesterConfirm = (v: any) => {
+    setSemesterVisible(false);
+    setIsSemesterActive(false);
+    setSemester(v[0]);
+  };
+  const handleGradeConfirm = (v: any) => {
+    setGradeVisible(false);
+    setIsGradeActive(false);
+    setGrade(v[0]);
+  };
 
+  // @ts-ignore
   return (
     <div className={styles.components}>
       <SearchBar
@@ -186,7 +216,7 @@ const TeacherHeader: React.FC<TeacherHeaderProps> = ({
                     }
                   >
                     <span className="my-adm-dropdown-item-title-text">
-                      {year}
+                      {year || '全部学年'}
                     </span>
                     <span
                       className={
@@ -244,7 +274,7 @@ const TeacherHeader: React.FC<TeacherHeaderProps> = ({
           }}
         />
         <Picker
-          columns={yearList}
+          columns={[years || []]}
           visible={visible}
           onClose={() => {
             setVisible(false);
@@ -255,7 +285,7 @@ const TeacherHeader: React.FC<TeacherHeaderProps> = ({
           }}
         />
         <Picker
-          columns={semesterList}
+          columns={[semesters || []]}
           visible={semesterVisible}
           onClose={() => {
             setSemesterVisible(false);
@@ -270,4 +300,4 @@ const TeacherHeader: React.FC<TeacherHeaderProps> = ({
     </div>
   );
 };
-export default TeacherHeader;
+export default TeacherQualityHeader;

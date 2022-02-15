@@ -18,8 +18,8 @@ export default {
     // },
     '/apl/': {
       // target: 'https://c13f8236-8d1c-4f30-ab01-03bcdc181797.mock.pstmn.io',
-      target: 'http://1.12.252.83:3000',
-      // target: 'http://139.9.196.99:3000/',
+      // target: 'http://1.12.252.83:3000',
+      target: 'http://139.9.196.99:3000/',
       changeOrigin: true,
       pathRewrite: { '^/apl/': '' },
     },

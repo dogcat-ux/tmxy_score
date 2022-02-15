@@ -5,7 +5,7 @@ import {
   ContentOutline,
   UserContactOutline,
 } from 'antd-mobile-icons';
-import { useHistory } from 'umi';
+import { useHistory, useLocation } from 'umi';
 import useUser from '@/hooks/useUser';
 
 const MyTabBar: React.FC = () => {
@@ -29,6 +29,8 @@ const MyTabBar: React.FC = () => {
     },
   ];
   const [activeKey, setActiveKey] = useState('academic');
+  const location = useLocation();
+  const { pathname } = location;
   const handleChange = (key: string) => {
     if (user.authority === 2) {
       history.push(`/teacher/${key}`);
@@ -38,11 +40,19 @@ const MyTabBar: React.FC = () => {
   };
   return (
     <>
-      <TabBar onChange={handleChange} style={{ background: '#ffffff' }}>
+      <TabBar
+        activeKey={pathname.split('/')[2]}
+        onChange={(value) => handleChange(value)}
+      >
         {tabs.map((item) => (
           <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
         ))}
       </TabBar>
+      {/*<TabBar onChange={handleChange} style={{ background: '#ffffff' }}>*/}
+      {/*  {tabs.map((item) => (*/}
+      {/*    <TabBar.Item key={item.key} icon={item.icon} title={item.title} />*/}
+      {/*  ))}*/}
+      {/*</TabBar>*/}
     </>
   );
 };
