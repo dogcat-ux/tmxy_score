@@ -5,13 +5,13 @@ import { Toast } from 'antd-mobile';
 const request = extend({
   timeout: 20000, // 设置超时时长
   prefix:
-    process.env.NODE_ENV === 'development'
-      ? '/apl'
-      : 'http://139.9.196.99:3000',
+    process.env.NODE_ENV === 'development' ? '/apl' : 'http://1.12.252.83:3000',
+  // : 'http://139.9.196.99:3000',
   // process.env.NODE_ENV === 'development' ? '/apl' : 'http://1.12.252.83:3000',
 });
 // 当前正在请求的数量
 let requestCount = 0;
+
 function showLoading() {
   if (requestCount === 0) {
     Toast.show({
@@ -22,6 +22,7 @@ function showLoading() {
   }
   requestCount++;
 }
+
 // 隐藏loading
 function hideLoading() {
   requestCount--;

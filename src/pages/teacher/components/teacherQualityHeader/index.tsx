@@ -38,9 +38,29 @@ const TeacherQualityHeader: React.FC<TeacherHeaderProps> = ({
   const [semesters, setSemesters] = useState<string[]>();
   const [year, setYear] = useState<string>('全部学年');
   const [semester, setSemester] = useState<string>('全部学期');
-  const sendApi = async (gradeTemp?: string) => {
-    let years = await yearListQuilty();
+  const getYearList = async () => {
     const map = new Map();
+    let years = await yearListQuilty();
+    if (years?.data?.item && years?.data?.item?.length > 0) {
+      // @ts-ignore
+      setYears([
+        '全部学年',
+        ...years.data.item.map((value: API.YearListResItemQulity) =>
+          value?.year?.toString(),
+        ),
+      ]);
+    }
+    // @ts-ignore
+    years?.data?.item?.map((value: API.YearListResItemQulity) => {
+      map.set(value?.year?.toString(), {
+        year_start_time: value?.year_start_time,
+        year_end_time: value?.year_end_time,
+      });
+      return map;
+    });
+    setYearsMap(map);
+  };
+  const sendApi = async () => {
     let res = null;
     let res1 = null;
     let res2 = null;
@@ -61,27 +81,10 @@ const TeacherQualityHeader: React.FC<TeacherHeaderProps> = ({
       res2 = { grade };
     }
     dispatch(personCenterApi({ ...res, ...res1, ...res2 }));
-    if (years?.data?.item && years?.data?.item?.length > 0) {
-      // @ts-ignore
-      setYears([
-        '全部学年',
-        ...years.data.item.map((value: API.YearListResItemQulity) =>
-          value?.year?.toString(),
-        ),
-      ]);
-    }
-    // @ts-ignore
-    years?.data?.item?.map((value: API.YearListResItemQulity) => {
-      map.set(value?.year?.toString(), {
-        year_start_time: value?.year_start_time,
-        year_end_time: value?.year_end_time,
-      });
-      return map;
-    });
-    setYearsMap(map);
   };
 
   useEffect(() => {
+    getYearList();
     dispatch(personGradeApi());
   }, []);
   useEffect(() => {

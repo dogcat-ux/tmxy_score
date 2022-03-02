@@ -40,7 +40,7 @@ export const getStuGpaApi = createAsyncThunk(
 );
 export const personCenterApi = createAsyncThunk(
   'personCenterApi',
-  async (body?: API.GetStuGpa) => await personCenter(body),
+  async (body?: API.personCenterParam) => await personCenter(body),
 );
 //获取所有不传参
 export const getAllStuGpaApi = createAsyncThunk(
@@ -98,8 +98,20 @@ export const teacherSlice = createSlice({
     semesterOne: '全部学期',
     yearListOne: [['全部学年']],
     semesterListOne: [['全部学期']],
+    yearQuality: '',
+    semesterQuality: '',
+    gradeQuality: '',
   },
   reducers: {
+    setYearQuality: (state, action) => {
+      state.yearQuality = action.payload;
+    },
+    setSemesterQuality: (state, action) => {
+      state.semesterQuality = action.payload;
+    },
+    setGradeQuality: (state, action) => {
+      state.gradeQuality = action.payload;
+    },
     setYear: (state, action) => {
       state.year = action.payload;
     },
@@ -294,5 +306,8 @@ export const {
   setYearOne,
   setSemesterOne,
   setSemesterListOne,
+  setGradeQuality,
+  setSemesterQuality,
+  setYearQuality,
 } = teacherSlice.actions;
 export default teacherSlice.reducer;

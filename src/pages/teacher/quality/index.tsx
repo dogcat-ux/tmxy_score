@@ -18,8 +18,6 @@ const Quality: React.FC = () => {
   const [data, setData] = useState<API.personCenterResItem[]>(personCenter);
   const [gpaData, setGpaData] =
     useState<API.personCenterResItem[]>(personCenter);
-  const grade = useSelector((state: RootState) => state.teacher.grade);
-  const year = useSelector((state: RootState) => state.teacher.year);
   const handleClick = (value: API.personCenterResItem) => {
     // @ts-ignore
     history.push({
@@ -56,16 +54,6 @@ const Quality: React.FC = () => {
     setData(personCenter);
     setGpaData(personCenter);
   }, [personCenter]);
-  useEffect(() => {
-    if (year !== CommonString.CommonYear) {
-      handleSearch(year);
-    }
-  }, [year]);
-  useEffect(() => {
-    if (grade !== CommonString.CommonGrade) {
-      handleSearch(grade);
-    }
-  }, [grade]);
   return (
     <div>
       <TeacherQualityHeader
